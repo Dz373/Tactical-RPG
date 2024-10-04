@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://bkyrp7o88nfgj"]
+
+[ext_resource type="Script" path="res://Menu/action_button.gd" id="1_e41us"]
+
+[node name="Button" type="Button"]
+script = ExtResource("1_e41us")
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="pressed" from="." to="." method="_on_pressed"]

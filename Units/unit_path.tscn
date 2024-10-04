@@ -1,0 +1,73 @@
+[gd_scene load_steps=6 format=3 uid="uid://nn0f5svx4huo"]
+
+[ext_resource type="Texture2D" uid="uid://lf02kmrebymd" path="res://Sprites/My Sprites/Arrows.png" id="1_3w64o"]
+[ext_resource type="Script" path="res://Units/UnitPath.gd" id="2_c4s3f"]
+[ext_resource type="Resource" uid="uid://drtdco6fmbidy" path="res://Board/Grid.tres" id="3_a8gm5"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_uu674"]
+texture = ExtResource("1_3w64o")
+0:0/0 = 0
+0:0/0/terrain_set = 0
+0:0/0/terrain = 0
+0:0/0/terrains_peering_bit/right_side = 0
+1:0/0 = 0
+1:0/0/terrain_set = 0
+1:0/0/terrain = 0
+1:0/0/terrains_peering_bit/bottom_side = 0
+2:0/0 = 0
+2:0/0/terrain_set = 0
+3:0/0 = 0
+3:0/0/terrain_set = 0
+0:1/0 = 0
+0:1/0/terrain_set = 0
+0:1/0/terrain = 0
+0:1/0/terrains_peering_bit/top_side = 0
+1:1/0 = 0
+1:1/0/terrain_set = 0
+1:1/0/terrain = 0
+1:1/0/terrains_peering_bit/left_side = 0
+2:1/0 = 0
+2:1/0/terrain_set = 0
+3:1/0 = 0
+3:1/0/terrain_set = 0
+0:2/0 = 0
+0:2/0/terrain_set = 0
+0:2/0/terrain = 0
+0:2/0/terrains_peering_bit/bottom_side = 0
+0:2/0/terrains_peering_bit/top_side = 0
+1:2/0 = 0
+1:2/0/terrain_set = 0
+1:2/0/terrain = 0
+1:2/0/terrains_peering_bit/right_side = 0
+1:2/0/terrains_peering_bit/left_side = 0
+2:2/0 = 0
+2:2/0/terrain_set = 0
+2:2/0/terrain = 0
+2:2/0/terrains_peering_bit/right_side = 0
+2:2/0/terrains_peering_bit/bottom_side = 0
+3:2/0 = 0
+3:2/0/terrain_set = 0
+3:2/0/terrain = 0
+3:2/0/terrains_peering_bit/bottom_side = 0
+3:2/0/terrains_peering_bit/left_side = 0
+2:3/0 = 0
+2:3/0/terrain_set = 0
+2:3/0/terrain = 0
+2:3/0/terrains_peering_bit/right_side = 0
+2:3/0/terrains_peering_bit/top_side = 0
+3:3/0 = 0
+3:3/0/terrain_set = 0
+3:3/0/terrain = 0
+3:3/0/terrains_peering_bit/left_side = 0
+3:3/0/terrains_peering_bit/top_side = 0
+
+[sub_resource type="TileSet" id="TileSet_fwtj6"]
+terrain_set_0/mode = 0
+terrain_set_0/terrain_0/name = "Path"
+terrain_set_0/terrain_0/color = Color(1, 0, 0, 1)
+sources/0 = SubResource("TileSetAtlasSource_uu674")
+
+[node name="UnitPath" type="TileMapLayer"]
+tile_set = SubResource("TileSet_fwtj6")
+script = ExtResource("2_c4s3f")
+grid = ExtResource("3_a8gm5")

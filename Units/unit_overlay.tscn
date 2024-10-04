@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=3 uid="uid://yhtd33jo11hi"]
+
+[ext_resource type="Texture2D" uid="uid://bm0dvm21equos" path="res://Sprites/MiniWorldSprites/User Interface/Highlighted-Boxes.png" id="1_hxn6n"]
+[ext_resource type="Script" path="res://Units/UnitOverlay.gd" id="2_p5e2k"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_s061q"]
+texture = ExtResource("1_hxn6n")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_o4421"]
+sources/0 = SubResource("TileSetAtlasSource_s061q")
+
+[node name="UnitOverlay" type="TileMapLayer"]
+tile_set = SubResource("TileSet_o4421")
+script = ExtResource("2_p5e2k")

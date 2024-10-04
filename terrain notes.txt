@@ -1,0 +1,6 @@
+water:
+	2 movement required
+
+forest:
+	2 movement
+	avoid buff

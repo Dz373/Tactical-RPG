@@ -1,0 +1,72 @@
+[gd_scene load_steps=7 format=3 uid="uid://ci3xqjw7fs6q6"]
+
+[ext_resource type="Texture2D" uid="uid://bpkbn3xlabavv" path="res://Sprites/UI Assets pack_v.1_st/UI.png" id="1_eihp1"]
+[ext_resource type="Script" path="res://Menu/action_menu.gd" id="1_fq3m4"]
+[ext_resource type="Texture2D" uid="uid://bgfppytte62xq" path="res://Menu/action_menu_button.tres" id="3_8lwov"]
+[ext_resource type="PackedScene" uid="uid://bkyrp7o88nfgj" path="res://Menu/button.tscn" id="4_t33he"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yjobo"]
+atlas = ExtResource("1_eihp1")
+region = Rect2(416, 16, 48, 48)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2u1ts"]
+texture = ExtResource("3_8lwov")
+
+[node name="ActionMenu" type="MarginContainer"]
+offset_right = 59.0
+offset_bottom = 32.0
+theme_override_constants/margin_right = 0
+script = ExtResource("1_fq3m4")
+
+[node name="Background" type="NinePatchRect" parent="."]
+layout_mode = 2
+texture = SubResource("AtlasTexture_yjobo")
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+
+[node name="MenuContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+focus_mode = 1
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 8
+
+[node name="BtnContainer" type="VBoxContainer" parent="MenuContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="AttackBtn" parent="MenuContainer/BtnContainer" instance=ExtResource("4_t33he")]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+theme_override_styles/focus = SubResource("StyleBoxTexture_2u1ts")
+text = "Attack"
+
+[node name="MagicBtn" parent="MenuContainer/BtnContainer" instance=ExtResource("4_t33he")]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+theme_override_styles/focus = SubResource("StyleBoxTexture_2u1ts")
+text = "Magic"
+
+[node name="SkillBtn" parent="MenuContainer/BtnContainer" instance=ExtResource("4_t33he")]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+theme_override_styles/focus = SubResource("StyleBoxTexture_2u1ts")
+text = "Skill"
+
+[node name="ItemBtn" parent="MenuContainer/BtnContainer" instance=ExtResource("4_t33he")]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+theme_override_styles/focus = SubResource("StyleBoxTexture_2u1ts")
+text = "Item"
+
+[node name="WaitBtn" parent="MenuContainer/BtnContainer" instance=ExtResource("4_t33he")]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+theme_override_styles/focus = SubResource("StyleBoxTexture_2u1ts")
+text = "Wait"

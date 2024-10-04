@@ -1,0 +1,41 @@
+[gd_scene load_steps=7 format=3 uid="uid://cqmdhxbchwu58"]
+
+[ext_resource type="Script" path="res://Board/Cursor.gd" id="1_2l8o0"]
+[ext_resource type="Resource" uid="uid://drtdco6fmbidy" path="res://Board/Grid.tres" id="2_mx45i"]
+[ext_resource type="Texture2D" uid="uid://d3g84n15yxba0" path="res://Sprites/MiniWorldSprites/User Interface/BoxSelector.png" id="3_2y6na"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pmf1h"]
+atlas = ExtResource("3_2y6na")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tr7j7"]
+atlas = ExtResource("3_2y6na")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8v8kf"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pmf1h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tr7j7")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Cursor" type="Node2D"]
+position = Vector2(8, 8)
+script = ExtResource("1_2l8o0")
+grid = ExtResource("2_mx45i")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_8v8kf")
+autoplay = "default"
+frame_progress = 0.561259
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
