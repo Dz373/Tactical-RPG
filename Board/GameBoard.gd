@@ -155,10 +155,8 @@ func move_active_unit(new_cell: Vector2) -> void:
 		active_unit_action()
 	if is_occupied(new_cell) or not new_cell in walkable_cells:
 		return
-	
 	units.erase(active_unit.cell)
 	units[new_cell] = active_unit
-	
 	deselect_active_unit()
 	active_unit.walk_along(unit_path.current_path)
 	await active_unit.walk_finished
@@ -171,22 +169,23 @@ func active_unit_action():
 	attack_cells=attack_fill([active_unit.cell])
 	unit_overlay.draw_attack_range(attack_cells)
 	action_phase=true
-	
 	while action_phase:
-		
 		actionMenu.visible=true
 		
 		var btn = await SignalBus.btn_pressed
 		
-		if btn == "WaitBtn":
+		if btn == "WaitBtn" or btn == "cancel":
+			action_phase=false
 			break
-		if btn == "AttackBtn":
+		elif btn == "AttackBtn":
 			actionMenu.visible=false
 			active_unit.is_attacking=true
 			
-			var u = await unit_attack
-			if u == Vector2(-1,-1):
+			var attack_target = await unit_attack
+			if attack_target == Vector2(-1,-1):
 				continue
+			print(attack_target)
+			
 			active_unit.is_attacking=false
 		
 		action_phase=false
@@ -220,7 +219,6 @@ func draw_unit_range():
 func deselect_active_unit() -> void:
 	active_unit.is_selected = false
 	clear_overlay()
-
 func clear_active_unit() -> void:
 	active_unit = null
 	clear_overlay()
@@ -231,31 +229,34 @@ func clear_overlay():
 	unit_path.stop()
 
 func _unhandled_input(event: InputEvent) -> void:
-	#cancel can be pressed during moving phase or action phase
 	if active_unit and event.is_action_pressed("cancel"):
-		units.erase(active_unit.cell)
-		units[active_unit_start] = active_unit
-		active_unit.position = grid.calculate_map_position(active_unit_start)
-		active_unit.cell = active_unit_start
-		actionMenu.visible=false
-		
-		if active_unit.is_attacking:
-			active_unit.is_attacking=false
-			emit_signal("unit_attack", Vector2(-1,-1))
-			return
-		
+		#cancel after selecting unit
 		if active_unit.is_selected:
+			deselect_active_unit()
 			clear_active_unit()
 		
-		SignalBus.btn_pressed.emit("cancel")
+		#cancel after selecting menu
+		elif active_unit.is_attacking:
+			active_unit.is_attacking=false
+			emit_signal("unit_attack", Vector2(-1,-1))
+		
+		#cancel after moving unit with menu open
+		elif action_phase:
+			units.erase(active_unit.cell)
+			units[active_unit_start] = active_unit
+			active_unit.position = grid.calculate_map_position(active_unit_start)
+			active_unit.cell = active_unit_start
+			SignalBus.btn_pressed.emit("cancel")
 
 func _on_cursor_accept_pressed(cell: Vector2) -> void:
 	if not active_unit:
 		select_unit(cell)
-	elif active_unit.is_attacking:
-		active_unit_attack(cell)
 	elif active_unit.is_selected:
 		move_active_unit(cell)
+	elif active_unit.is_attacking:
+		active_unit_attack(cell)
+	else:
+		print("press error")
 
 func _on_cursor_moved(new_cell: Vector2) -> void:
 	if active_unit and active_unit.is_selected:
@@ -264,6 +265,7 @@ func _on_cursor_moved(new_cell: Vector2) -> void:
 func _on_visible_on_screen_enabler_2d_screen_entered() -> void:
 	menu_on_screen=true
 	cursor.menu_on_screen=true
+	cursor.position = active_unit.position
 	actionMenu.get_first_button().grab_focus()
 
 func _on_visible_on_screen_enabler_2d_screen_exited() -> void:
