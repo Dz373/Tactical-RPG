@@ -208,7 +208,7 @@ stats = ExtResource("11_sjm0f")
 class_type = ExtResource("12_g5gwo")
 
 [node name="Unit2" parent="GameBoard" instance=ExtResource("12_ddttq")]
-position = Vector2(168, 136)
+position = Vector2(168, 152)
 move_range = 4
 move_speed = 5
 max_range = 2
