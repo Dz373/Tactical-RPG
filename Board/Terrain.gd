@@ -15,3 +15,6 @@ func reduce_movement(cell: Vector2)->bool:
 
 func is_wall(cell: Vector2)->bool:
 	return obstacles.get_cell_source_id(cell)==0
+
+func terrain_cost(cell: Vector2)->int:
+	return get_cell_source_id(cell)+1

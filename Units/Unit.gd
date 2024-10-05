@@ -4,7 +4,6 @@ extends Path2D
 
 ## Emitted when the unit reached the end of a path along which it was walking.
 signal walk_finished
-
 ## Shared resource of type Grid, used to calculate map coordinates.
 @export var grid: Resource
 ## Distance to which the unit can walk in cells.
@@ -40,8 +39,7 @@ func _ready() -> void:
 	_path_follow.rotates=false
 	cell = grid.calculate_grid_coordinates(position)
 	position = grid.calculate_map_position(cell)
-	# We create the curve resource here because creating it in the editor prevents us from
-	# moving the unit.
+	
 	if not Engine.is_editor_hint():
 		curve = Curve2D.new()
 
@@ -76,7 +74,7 @@ func _process(_delta: float) -> void:
 func walk_along(path: PackedVector2Array) -> void:
 	if path.is_empty():
 		return
-
+	
 	curve.add_point(Vector2.ZERO)
 	for point in path:
 		curve.add_point(grid.calculate_map_position(point) - position)

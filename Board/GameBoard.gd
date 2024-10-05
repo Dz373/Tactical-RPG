@@ -25,7 +25,6 @@ var active_unit_start: Vector2
 var walkable_cells := []
 var attack_cells := []
 var menu_on_screen := false
-
 var action_phase=false
 
 var turn := 1:
@@ -50,31 +49,27 @@ func _ready() -> void:
 	turnCounter.text = "Turn: " + str(turn)
 	actionMenu.visible=false
 
+var range_track:={}
 func get_walkable_cells(unit: Unit)->Array:
-	return walk_fill(unit.cell, unit.move_range+1)
-func walk_fill(cell: Vector2, move_range: int) -> Array:
-	var queue:=[cell]
-	var rangeArr:=[]
-	var push:=[]
-	for x in range(move_range):
-		var queueSize = queue.size()
-		while push.size() != 0:
-			queue.append(push.pop_front())
-		
-		for y in range(queueSize):
-			var current = queue.pop_front()
-			for direction in DIRECTIONS:
-				var coordinates: Vector2 = current + direction
-				if not grid.is_within_bounds(current) or is_occupied(coordinates):
-					continue
-				if coordinates in queue or coordinates in rangeArr:
-					continue
-				if terrain.reduce_movement(coordinates):
-					push.append(coordinates)
-					continue
-				queue.append(coordinates)
-			rangeArr.append(current)
-	return rangeArr
+	range_track.clear()
+	var arr:=[]
+	walk_fill(unit.cell, unit.move_range, arr)
+	return arr
+func walk_fill(cell: Vector2, move_range: int, arr: Array):
+	arr.append(cell)
+	range_track[cell]=move_range
+	for dir in DIRECTIONS:
+		var coord = cell+dir
+		var range = move_range-terrain.terrain_cost(coord)
+		if range < 0:
+			continue
+		if not grid.is_within_bounds(coord) or is_occupied(coord):
+			continue
+		if not range_track.has(coord):
+			walk_fill(coord, range, arr)
+		elif range > range_track[coord]:
+			range_track[coord]=range
+			walk_fill(coord, range, arr)
 
 var attackArr:=[]
 func get_attackable_cells(_unit: Unit)->Array:
@@ -146,6 +141,8 @@ func reinitialize() -> void:
 
 ## Returns `true` if the cell is occupied by a unit. 
 func is_occupied(cell: Vector2) -> bool:
+	if cell==active_unit.cell:
+		return false
 	return units.has(cell) or terrain.can_pass(cell)
 
 ## Updates the _units dictionary with the target position for the unit and asks the _active_unit to walk to it.
@@ -171,7 +168,6 @@ func active_unit_action():
 	action_phase=true
 	while action_phase:
 		actionMenu.visible=true
-		
 		var btn = await SignalBus.btn_pressed
 		
 		if btn == "WaitBtn" or btn == "cancel":
