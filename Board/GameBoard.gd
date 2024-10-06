@@ -49,6 +49,15 @@ func _ready() -> void:
 	turnCounter.text = "Turn: " + str(turn)
 	actionMenu.visible=false
 
+func reinitialize() -> void:
+	units.clear()
+	for child in get_children():
+		var unit := child as Unit
+		if not unit:
+			continue
+		if unit:
+			units[unit.cell] = unit
+
 var range_track:={}
 func get_walkable_cells(unit: Unit)->Array:
 	range_track.clear()
@@ -59,17 +68,17 @@ func walk_fill(cell: Vector2, move_range: int, arr: Array):
 	arr.append(cell)
 	range_track[cell]=move_range
 	for dir in DIRECTIONS:
-		var coord = cell+dir
-		var range = move_range-terrain.terrain_cost(coord)
-		if range < 0:
+		var new_coord = cell+dir
+		if not grid.is_within_bounds(new_coord) or is_occupied(new_coord):
 			continue
-		if not grid.is_within_bounds(coord) or is_occupied(coord):
+		var new_range = move_range-terrain.terrain_cost(new_coord)
+		if new_range < 0:
 			continue
-		if not range_track.has(coord):
-			walk_fill(coord, range, arr)
-		elif range > range_track[coord]:
-			range_track[coord]=range
-			walk_fill(coord, range, arr)
+		if not range_track.has(new_coord):
+			walk_fill(new_coord, new_range, arr)
+		elif new_range > range_track[new_coord]:
+			range_track[new_coord]=new_range
+			walk_fill(new_coord, new_range, arr)
 
 var attackArr:=[]
 func get_attackable_cells(_unit: Unit)->Array:
@@ -93,6 +102,7 @@ func wall_in_way(attack_cell: Vector2, tile: Vector2)->bool:
 	var target_pos = grid.calculate_map_position(attack_cell)-tile
 	ray.target_position=target_pos
 	ray.force_raycast_update()
+	
 	return ray.is_colliding()
 
 #return attack range for a single tile
@@ -130,20 +140,11 @@ func in_arrays(cord: Vector2, arr: Array)->bool:
 		return true
 	return false
 
-func reinitialize() -> void:
-	units.clear()
-	for child in get_children():
-		var unit := child as Unit
-		if not unit:
-			continue
-		if unit:
-			units[unit.cell] = unit
-
 ## Returns `true` if the cell is occupied by a unit. 
 func is_occupied(cell: Vector2) -> bool:
 	if cell==active_unit.cell:
 		return false
-	return units.has(cell) or terrain.can_pass(cell)
+	return units.has(cell) or not terrain.can_pass(cell)
 
 ## Updates the _units dictionary with the target position for the unit and asks the _active_unit to walk to it.
 func move_active_unit(new_cell: Vector2) -> void:
