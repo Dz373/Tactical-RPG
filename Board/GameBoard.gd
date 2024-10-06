@@ -144,7 +144,9 @@ func in_arrays(cord: Vector2, arr: Array)->bool:
 func is_occupied(cell: Vector2) -> bool:
 	if cell==active_unit.cell:
 		return false
-	return units.has(cell) or not terrain.can_pass(cell)
+	if units.has(cell) and units[cell].team!=active_unit.team:
+		return true
+	return not terrain.can_pass(cell)
 
 ## Updates the _units dictionary with the target position for the unit and asks the _active_unit to walk to it.
 func move_active_unit(new_cell: Vector2) -> void:
@@ -153,6 +155,8 @@ func move_active_unit(new_cell: Vector2) -> void:
 		active_unit_action()
 	if is_occupied(new_cell) or not new_cell in walkable_cells:
 		return
+	if units.has(new_cell) and units[new_cell].team==active_unit.team:
+		return 
 	units.erase(active_unit.cell)
 	units[new_cell] = active_unit
 	deselect_active_unit()
@@ -190,6 +194,8 @@ func active_unit_action():
 
 func active_unit_attack(attack_cell: Vector2):
 	if not attack_cell in attack_cells or not units.has(attack_cell):
+		return
+	if units[attack_cell].team == active_unit.team:
 		return
 	emit_signal("unit_attack", attack_cell)
 

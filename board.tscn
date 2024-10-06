@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=4 uid="uid://3qxj2k7wn5y5"]
+[gd_scene load_steps=23 format=4 uid="uid://3qxj2k7wn5y5"]
 
 [ext_resource type="Texture2D" uid="uid://ben5xt7gv40c4" path="res://Sprites/fantasy_ [version 2.0]/forest_/forestPath_.png" id="5_066xd"]
 [ext_resource type="Texture2D" uid="uid://dbrigcvgs2leb" path="res://Sprites/fantasy_ [version 2.0]/swamp_/swamp_.png" id="5_j526l"]
@@ -13,9 +13,10 @@
 [ext_resource type="Script" path="res://Board/Terrain.gd" id="11_w33xh"]
 [ext_resource type="PackedScene" uid="uid://ctdtnl32pqeat" path="res://Units/BaseUnit.tscn" id="12_ddttq"]
 [ext_resource type="Resource" uid="uid://drd011e1sjlsg" path="res://Units/Class_types/Class_type.tres" id="12_g5gwo"]
+[ext_resource type="PackedScene" uid="uid://dq0ulft7ykws0" path="res://Units/Enemy_unit.tscn" id="13_u7hvr"]
 [ext_resource type="PackedScene" uid="uid://cqmdhxbchwu58" path="res://Board/cursor.tscn" id="13_wgu0w"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rkpxv"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5pv1u"]
 texture = ExtResource("5_066xd")
 1:1/0 = 0
 1:1/0/custom_data_0 = 1
@@ -54,7 +55,7 @@ texture = ExtResource("5_066xd")
 6:3/0 = 0
 6:3/0/custom_data_0 = 1
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_y6m54"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_c5ixy"]
 texture = ExtResource("5_j526l")
 1:1/0 = 0
 1:1/0/custom_data_0 = 2
@@ -292,10 +293,10 @@ physics_layer_0/collision_layer = 1
 physics_layer_0/collision_mask = 4
 custom_data_layer_0/name = "cost"
 custom_data_layer_0/type = 2
-sources/0 = SubResource("TileSetAtlasSource_rkpxv")
-sources/1 = SubResource("TileSetAtlasSource_y6m54")
+sources/0 = SubResource("TileSetAtlasSource_5pv1u")
+sources/1 = SubResource("TileSetAtlasSource_c5ixy")
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7p0kb"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qynms"]
 texture = ExtResource("10_rst45")
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
@@ -308,7 +309,7 @@ physics_layer_0/collision_layer = 2
 physics_layer_0/collision_mask = 4
 custom_data_layer_0/name = "block"
 custom_data_layer_0/type = 1
-sources/0 = SubResource("TileSetAtlasSource_7p0kb")
+sources/0 = SubResource("TileSetAtlasSource_qynms")
 
 [sub_resource type="LabelSettings" id="LabelSettings_h21ic"]
 font_size = 8
@@ -350,6 +351,18 @@ move_speed = 5
 max_range = 2
 stats = ExtResource("11_sjm0f")
 class_type = ExtResource("12_g5gwo")
+
+[node name="Unit3" parent="GameBoard" instance=ExtResource("13_u7hvr")]
+position = Vector2(136, 152)
+
+[node name="Unit4" parent="GameBoard" instance=ExtResource("13_u7hvr")]
+position = Vector2(120, 136)
+
+[node name="Unit5" parent="GameBoard" instance=ExtResource("13_u7hvr")]
+position = Vector2(136, 168)
+
+[node name="Unit6" parent="GameBoard" instance=ExtResource("13_u7hvr")]
+position = Vector2(120, 152)
 
 [node name="Cursor" parent="GameBoard" instance=ExtResource("13_wgu0w")]
 
