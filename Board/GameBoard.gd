@@ -16,6 +16,8 @@ const DIRECTIONS = [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]
 
 ## Mapping of coordinates of a cell to a reference to the unit it contains.
 var units := {}
+var player_units :=[]
+var enemy_units :=[]
 var active_unit:
 	set(value):
 		active_unit=value
@@ -57,6 +59,23 @@ func reinitialize() -> void:
 			continue
 		if unit:
 			units[unit.cell] = unit
+		if unit.team == 1:
+			player_units.append(unit)
+		else:
+			enemy_units.append(unit)
+		unit.end_turn=false
+
+func _process(delta: float) -> void:
+	if finish_turn():
+		reinitialize()
+		turn+=1
+		print("end turn")
+
+func finish_turn()->bool:
+	for unit in player_units:
+		if not unit.end_turn:
+			return false
+	return true
 
 var range_track:={}
 func get_walkable_cells(unit: Unit)->Array:
@@ -175,11 +194,14 @@ func active_unit_action():
 		actionMenu.visible=true
 		var btn = await SignalBus.btn_pressed
 		actionMenu.visible=false
-		if btn == "WaitBtn" or btn == "cancel":
+		if btn == "cancel":
+			action_phase=false
+			break
+		if btn == "WaitBtn":
+			active_unit.end_turn = true
 			action_phase=false
 			break
 		elif btn == "AttackBtn":
-			
 			active_unit.is_attacking=true
 			var attack_target = await unit_attack
 			if attack_target == Vector2(-1,-1):
@@ -189,6 +211,8 @@ func active_unit_action():
 			active_unit.is_attacking=false
 		
 		action_phase=false
+		active_unit.end_turn = true
+		
 	clear_active_unit()
 	#teamTurn+=1
 
@@ -209,8 +233,11 @@ func calc_damage(target:Unit)->int:
 func select_unit(cell: Vector2) -> void:
 	if not units.has(cell) or not teamTurn==units[cell].team:
 		return
+	if units[cell].end_turn:
+		return
 	active_unit = units[cell]
 	active_unit.is_selected = true
+	active_unit.end_turn = false
 	draw_unit_range()
 
 func draw_unit_range():
