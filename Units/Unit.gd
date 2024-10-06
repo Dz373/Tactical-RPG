@@ -34,14 +34,33 @@ var _is_walking := false:
 		set_process(_is_walking)
 var is_attacking=false
 
+var hp:
+	set(value):
+		if value <= 0:
+			print(str(name) + " defeated")
+			get_parent().units.erase(cell)
+			queue_free()
+		hp = value
+var attack
+var defense
+
 func _ready() -> void:
 	set_process(false)
 	_path_follow.rotates=false
 	cell = grid.calculate_grid_coordinates(position)
 	position = grid.calculate_map_position(cell)
-	
+	set_stat()
+	set_class()
 	if not Engine.is_editor_hint():
 		curve = Curve2D.new()
+
+func set_stat():
+	hp = stats.hp
+	attack = stats.attack
+	defense = stats.defense
+
+func set_class():
+	pass
 
 var previousProgress=0
 var previousPosition=Vector2(0,0)

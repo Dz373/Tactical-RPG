@@ -170,24 +170,21 @@ func active_unit_action():
 	while action_phase:
 		actionMenu.visible=true
 		var btn = await SignalBus.btn_pressed
-		
+		actionMenu.visible=false
 		if btn == "WaitBtn" or btn == "cancel":
 			action_phase=false
 			break
 		elif btn == "AttackBtn":
-			actionMenu.visible=false
-			active_unit.is_attacking=true
 			
+			active_unit.is_attacking=true
 			var attack_target = await unit_attack
 			if attack_target == Vector2(-1,-1):
 				continue
-			print(attack_target)
-			
+			var target_unit = units[attack_target]
+			target_unit.hp -= calc_damage(target_unit)
 			active_unit.is_attacking=false
 		
 		action_phase=false
-	
-	actionMenu.visible=false
 	clear_active_unit()
 	#teamTurn+=1
 
@@ -195,6 +192,11 @@ func active_unit_attack(attack_cell: Vector2):
 	if not attack_cell in attack_cells or not units.has(attack_cell):
 		return
 	emit_signal("unit_attack", attack_cell)
+
+func calc_damage(target:Unit)->int:
+	if target.defense > active_unit.attack:
+		return 0
+	return (active_unit.attack-target.defense)
 
 ## Selects the unit in the `cell` if there's one there.
 ## Sets it as the `_active_unit` and draws its walkable cells and interactive move path. 

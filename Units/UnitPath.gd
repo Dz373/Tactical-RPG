@@ -23,11 +23,9 @@ func initialize(walkable_cells: Array) -> void:
 		for x in grid.size.x:
 			if not walkable_cells.has(Vector2(x,y)):
 				astar.set_point_solid(Vector2(x,y))
-
-func map_weight():
-	for y in grid.size.y:
-		for x in grid.size.x:
-			astar.set_point_weight_scale(Vector2(x,y),terrain.terrain_cost(Vector2(x,y)))
+				continue
+			if terrain.terrain_cost(Vector2(x,y))!=1:
+				astar.set_point_weight_scale(Vector2(x,y),terrain.terrain_cost(Vector2(x,y)))
 
 ## Finds and draws the path between `cell_start` and `cell_end`
 func draw(cell_start: Vector2, cell_end: Vector2) -> void:

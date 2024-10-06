@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://benhuddmfpx7k"]
+
+[ext_resource type="Script" path="res://Units/Class_types/Stat.gd" id="1_lc2hv"]
+
+[resource]
+script = ExtResource("1_lc2hv")
+hp = 5
+attack = 5
+defense = 0
