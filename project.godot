@@ -85,7 +85,7 @@ cancel={
 [layer_names]
 
 2d_physics/layer_1="Terrain"
-2d_physics/layer_2="Obstacles"
+2d_physics/layer_2="Wall"
 2d_physics/layer_3="Units"
 
 [rendering]
