@@ -33,6 +33,7 @@ var _is_walking := false:
 		_is_walking = value
 		set_process(_is_walking)
 var is_attacking=false
+var end_turn=false
 
 var hp:
 	set(value):
