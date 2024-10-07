@@ -53,16 +53,17 @@ func _ready() -> void:
 
 func reinitialize() -> void:
 	units.clear()
-	print("re")
+	player_units.clear()
+	enemy_units.clear()
 	for child in get_children():
 		var unit := child as Unit
 		if not unit:
 			continue
 		if unit:
 			units[unit.cell] = unit
-		if unit.team == 1:
+		if unit.team==1:
 			player_units.append(unit)
-		else:
+		elif unit.team==2:
 			enemy_units.append(unit)
 		unit.end_turn=false
 
@@ -306,4 +307,20 @@ func _on_visible_on_screen_enabler_2d_screen_exited() -> void:
 	cursor.menu_on_screen=false
 
 func enemy_turn():
-	print(enemy_units)
+	for unit in enemy_units:
+		print(find_target_unit(unit))
+
+func find_target_unit(current_unit: Unit)->Unit:
+	#find closest player
+	var closest_unit = player_units[0]
+	var closest = find_distance(closest_unit, current_unit)
+	for unit in player_units:
+		var distance=find_distance(unit, current_unit)
+		if  distance < closest:
+			closest_unit=unit
+			closest=distance
+	return closest_unit
+
+func find_distance(unit1:Unit, unit2:Unit)->int:
+	var distance = (unit1.cell - unit2.cell).abs()
+	return distance.x+distance.y

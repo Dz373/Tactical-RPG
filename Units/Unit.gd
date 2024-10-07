@@ -35,6 +35,7 @@ var _is_walking := false:
 var is_attacking=false
 var end_turn=false:
 	set(value):
+		end_turn=value
 		if value:
 			print(str(name)+" end turn")
 
