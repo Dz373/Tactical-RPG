@@ -33,7 +33,10 @@ var _is_walking := false:
 		_is_walking = value
 		set_process(_is_walking)
 var is_attacking=false
-var end_turn=false
+var end_turn=false:
+	set(value):
+		if value:
+			print(str(name)+" end turn")
 
 var hp:
 	set(value):
@@ -42,8 +45,8 @@ var hp:
 			get_parent().units.erase(cell)
 			queue_free()
 		hp = value
-var attack
-var defense
+var atk
+var def
 
 func _ready() -> void:
 	set_process(false)
@@ -57,8 +60,8 @@ func _ready() -> void:
 
 func set_stat():
 	hp = stats.hp
-	attack = stats.attack
-	defense = stats.defense
+	atk = stats.attack
+	def = stats.defense
 
 func set_class():
 	pass

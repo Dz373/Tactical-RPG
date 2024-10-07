@@ -53,6 +53,7 @@ func _ready() -> void:
 
 func reinitialize() -> void:
 	units.clear()
+	print("re")
 	for child in get_children():
 		var unit := child as Unit
 		if not unit:
@@ -65,11 +66,12 @@ func reinitialize() -> void:
 			enemy_units.append(unit)
 		unit.end_turn=false
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if finish_turn():
 		reinitialize()
 		turn+=1
-		print("end turn")
+		print("end player turn")
+		enemy_turn()
 
 func finish_turn()->bool:
 	for unit in player_units:
@@ -163,7 +165,7 @@ func in_arrays(cord: Vector2, arr: Array)->bool:
 func is_occupied(cell: Vector2) -> bool:
 	if cell==active_unit.cell:
 		return false
-	if units.has(cell) and units[cell].team!=active_unit.team:
+	if units.has(cell) and enemy_units.has(units[cell]):
 		return true
 	return not terrain.can_pass(cell)
 
@@ -174,7 +176,7 @@ func move_active_unit(new_cell: Vector2) -> void:
 		active_unit_action()
 	if is_occupied(new_cell) or not new_cell in walkable_cells:
 		return
-	if units.has(new_cell) and units[new_cell].team==active_unit.team:
+	if units.has(new_cell) and player_units.has(units[new_cell]):
 		return 
 	units.erase(active_unit.cell)
 	units[new_cell] = active_unit
@@ -214,24 +216,23 @@ func active_unit_action():
 		active_unit.end_turn = true
 		
 	clear_active_unit()
-	#teamTurn+=1
 
 func active_unit_attack(attack_cell: Vector2):
 	if not attack_cell in attack_cells or not units.has(attack_cell):
 		return
-	if units[attack_cell].team == active_unit.team:
+	if units[attack_cell].team==1:
 		return
 	emit_signal("unit_attack", attack_cell)
 
 func calc_damage(target:Unit)->int:
-	if target.defense > active_unit.attack:
+	if target.def > active_unit.atk:
 		return 0
-	return (active_unit.attack-target.defense)
+	return (active_unit.atk-target.def)
 
 ## Selects the unit in the `cell` if there's one there.
 ## Sets it as the `_active_unit` and draws its walkable cells and interactive move path. 
 func select_unit(cell: Vector2) -> void:
-	if not units.has(cell) or not teamTurn==units[cell].team:
+	if not units.has(cell) or not units[cell].team==1:
 		return
 	if units[cell].end_turn:
 		return
@@ -303,3 +304,6 @@ func _on_visible_on_screen_enabler_2d_screen_entered() -> void:
 func _on_visible_on_screen_enabler_2d_screen_exited() -> void:
 	menu_on_screen=false
 	cursor.menu_on_screen=false
+
+func enemy_turn():
+	print(enemy_units)
