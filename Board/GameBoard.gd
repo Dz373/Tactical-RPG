@@ -50,7 +50,7 @@ func _ready() -> void:
 	unit_path.tile_set.set_tile_size(grid.cell_size)
 	turnCounter.text = "Turn: " + str(turn)
 	actionMenu.visible=false
-
+	
 func reinitialize() -> void:
 	units.clear()
 	player_units.clear()
@@ -69,10 +69,10 @@ func reinitialize() -> void:
 
 func _process(_delta: float) -> void:
 	if finish_turn():
-		reinitialize()
 		turn+=1
 		print("end player turn")
 		enemy_turn()
+		reinitialize()
 
 func finish_turn()->bool:
 	for unit in player_units:
@@ -247,7 +247,7 @@ func draw_unit_range():
 	attack_cells=get_attackable_cells(active_unit)
 	unit_overlay.draw_move_range(walkable_cells)
 	unit_overlay.draw_attack_range(attack_cells)
-	unit_path.initialize(walkable_cells)
+	unit_path.initialize(walkable_cells,1)
 
 ## Deselects the active unit, clearing the cells overlay and interactive path drawing.
 func deselect_active_unit() -> void:
@@ -308,7 +308,16 @@ func _on_visible_on_screen_enabler_2d_screen_exited() -> void:
 
 func enemy_turn():
 	for unit in enemy_units:
-		print(find_target_unit(unit))
+		active_unit=unit
+		var target=find_target_unit(unit)
+		var unit_range = get_walkable_cells(unit)
+		unit_path.initialize(unit_range, 2)
+		var move_point = find_move_point(target.cell, unit_range)
+		
+		active_unit.walk_along(unit_path.calculate_point_path(unit.cell,move_point))
+		
+		unit_path.stop()
+		active_unit=null
 
 func find_target_unit(current_unit: Unit)->Unit:
 	#find closest player
@@ -320,6 +329,16 @@ func find_target_unit(current_unit: Unit)->Unit:
 			closest_unit=unit
 			closest=distance
 	return closest_unit
+
+func find_move_point(cell:Vector2, unit_range:Array)->Vector2:
+	var path = unit_path.calculate_point_path(active_unit.cell,cell)
+	var prev_point = path[0]
+	for point in path:
+		if point in unit_range:
+			prev_point = point
+			continue
+		return prev_point
+	return cell
 
 func find_distance(unit1:Unit, unit2:Unit)->int:
 	var distance = (unit1.cell - unit2.cell).abs()

@@ -44,6 +44,10 @@ var hp:
 		if value <= 0:
 			print(str(name) + " defeated")
 			get_parent().units.erase(cell)
+			if team==1:
+				get_parent().player_units.erase(self)
+			elif team==2:
+				get_parent().enemy_units.erase(self)
 			queue_free()
 		hp = value
 var atk
