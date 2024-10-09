@@ -53,23 +53,25 @@ func _ready() -> void:
 
 func reinitialize() -> void:
 	units.clear()
+	player_units.clear()
+	enemy_units.clear()
 	for child in get_children():
 		var unit := child as Unit
 		if not unit:
 			continue
 		if unit:
 			units[unit.cell] = unit
-		if unit.team == 1:
+		if unit.team==1:
 			player_units.append(unit)
-		else:
+		elif unit.team==2:
 			enemy_units.append(unit)
 		unit.end_turn=false
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if finish_turn():
-		reinitialize()
+		enemy_turn()
 		turn+=1
-		print("end turn")
+		reinitialize()
 
 func finish_turn()->bool:
 	for unit in player_units:
@@ -163,7 +165,7 @@ func in_arrays(cord: Vector2, arr: Array)->bool:
 func is_occupied(cell: Vector2) -> bool:
 	if cell==active_unit.cell:
 		return false
-	if units.has(cell) and units[cell].team!=active_unit.team:
+	if units.has(cell):
 		return true
 	return not terrain.can_pass(cell)
 
@@ -174,7 +176,7 @@ func move_active_unit(new_cell: Vector2) -> void:
 		active_unit_action()
 	if is_occupied(new_cell) or not new_cell in walkable_cells:
 		return
-	if units.has(new_cell) and units[new_cell].team==active_unit.team:
+	if units.has(new_cell) and player_units.has(units[new_cell]):
 		return 
 	units.erase(active_unit.cell)
 	units[new_cell] = active_unit
@@ -214,24 +216,23 @@ func active_unit_action():
 		active_unit.end_turn = true
 		
 	clear_active_unit()
-	#teamTurn+=1
 
 func active_unit_attack(attack_cell: Vector2):
 	if not attack_cell in attack_cells or not units.has(attack_cell):
 		return
-	if units[attack_cell].team == active_unit.team:
+	if units[attack_cell].team==1:
 		return
 	emit_signal("unit_attack", attack_cell)
 
 func calc_damage(target:Unit)->int:
-	if target.defense > active_unit.attack:
+	if target.def > active_unit.atk:
 		return 0
-	return (active_unit.attack-target.defense)
+	return (active_unit.atk-target.def)
 
 ## Selects the unit in the `cell` if there's one there.
 ## Sets it as the `_active_unit` and draws its walkable cells and interactive move path. 
 func select_unit(cell: Vector2) -> void:
-	if not units.has(cell) or not teamTurn==units[cell].team:
+	if not units.has(cell) or not units[cell].team==1:
 		return
 	if units[cell].end_turn:
 		return
@@ -245,7 +246,7 @@ func draw_unit_range():
 	attack_cells=get_attackable_cells(active_unit)
 	unit_overlay.draw_move_range(walkable_cells)
 	unit_overlay.draw_attack_range(attack_cells)
-	unit_path.initialize(walkable_cells)
+	unit_path.initialize(walkable_cells,1)
 
 ## Deselects the active unit, clearing the cells overlay and interactive path drawing.
 func deselect_active_unit() -> void:
@@ -303,3 +304,58 @@ func _on_visible_on_screen_enabler_2d_screen_entered() -> void:
 func _on_visible_on_screen_enabler_2d_screen_exited() -> void:
 	menu_on_screen=false
 	cursor.menu_on_screen=false
+
+func enemy_turn():
+	for unit in enemy_units:
+		active_unit=unit
+		print(active_unit.name)
+		var unit_range = get_walkable_cells(unit)
+		var target=find_target_unit(unit, unit_range)
+		unit_range.append(target.cell)
+		
+		unit_path.initialize(unit_range, 2)
+		var move_point = find_move_point(target.cell, unit_range)
+		
+		active_unit.walk_along(unit_path.calculate_point_path(unit.cell,move_point))
+		
+		await active_unit.walk_finished
+		
+		units.erase(active_unit.cell)
+		units[move_point] = active_unit
+		
+		unit_path.stop()
+		active_unit=null
+	
+
+func find_target_unit(current_unit:Unit, unit_range:Array)->Unit:
+	var closest_unit = player_units[0]
+	var closest = find_distance(closest_unit, current_unit)
+	var close_arr = []
+	for unit in player_units:
+		var distance=find_distance(unit, current_unit)
+		if  distance < closest:
+			closest_unit=unit
+			closest=distance
+		if unit.cell in unit_range:
+			close_arr.append(unit)
+	
+	for unit in close_arr:
+		if calc_damage(closest_unit) < calc_damage(unit):
+			closest_unit=unit
+	return closest_unit
+
+func find_move_point(cell:Vector2, unit_range:Array)->Vector2:
+	var path = unit_path.calculate_point_path(active_unit.cell,cell)
+	var prev_point
+	if path:
+		prev_point = path[0]
+	for point in path:
+		if point in unit_range and point!=cell:
+			prev_point = point
+			continue
+		return prev_point
+	return active_unit.cell
+
+func find_distance(unit1:Unit, unit2:Unit)->int:
+	var distance = (unit1.cell - unit2.cell).abs()
+	return distance.x+distance.y

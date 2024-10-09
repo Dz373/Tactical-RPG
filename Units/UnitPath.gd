@@ -10,7 +10,7 @@ var astar : AStarGrid2D
 
 ## Creates a new PathFinder that uses the AStar algorithm to find a path between two cells among
 ## the `walkable_cells`.
-func initialize(walkable_cells: Array) -> void:
+func initialize(walkable_cells: Array, team:int) -> void:
 	astar = AStarGrid2D.new()
 	astar.region = Rect2i(Vector2.ZERO,grid.size)
 	astar.cell_size = grid.cell_size
@@ -21,9 +21,16 @@ func initialize(walkable_cells: Array) -> void:
 	
 	for y in grid.size.y:
 		for x in grid.size.x:
-			if not walkable_cells.has(Vector2(x,y)):
+			if not walkable_cells.has(Vector2(x,y)) and team==1:
 				astar.set_point_solid(Vector2(x,y))
 				continue
+			if team==2:
+				var active=get_parent().active_unit
+				var dis_vec = (active.cell-Vector2(x,y)).abs()
+				var distance = dis_vec.x+dis_vec.y
+				if distance <= active.move_range and not walkable_cells.has(Vector2(x,y)):
+					astar.set_point_solid(Vector2(x,y))
+					continue
 			if terrain.terrain_cost(Vector2(x,y))!=1:
 				astar.set_point_weight_scale(Vector2(x,y),terrain.terrain_cost(Vector2(x,y)))
 
@@ -39,6 +46,4 @@ func stop() -> void:
 	clear()
 
 func calculate_point_path(start: Vector2, end: Vector2) -> PackedVector2Array:
-	# With an AStarGrid2D, we only need to call get_id_path to return
-	#	the expected array
 	return astar.get_id_path(start,end)

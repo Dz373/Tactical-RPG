@@ -33,17 +33,25 @@ var _is_walking := false:
 		_is_walking = value
 		set_process(_is_walking)
 var is_attacking=false
-var end_turn=false
+var end_turn=false:
+	set(value):
+		end_turn=value
+		if value:
+			print(str(name)+" end turn")
 
 var hp:
 	set(value):
 		if value <= 0:
 			print(str(name) + " defeated")
 			get_parent().units.erase(cell)
+			if team==1:
+				get_parent().player_units.erase(self)
+			elif team==2:
+				get_parent().enemy_units.erase(self)
 			queue_free()
 		hp = value
-var attack
-var defense
+var atk
+var def
 
 func _ready() -> void:
 	set_process(false)
@@ -57,8 +65,8 @@ func _ready() -> void:
 
 func set_stat():
 	hp = stats.hp
-	attack = stats.attack
-	defense = stats.defense
+	atk = stats.attack
+	def = stats.defense
 
 func set_class():
 	pass
@@ -77,7 +85,7 @@ func _process(_delta: float) -> void:
 	if _path_follow.position.x < previousPosition.x:
 		animation_player.play("walk-left")
 	
-	if previousProgress > _path_follow.progress:
+	if previousProgress >= _path_follow.progress:
 		_is_walking = false
 		# Setting this value to 0.0 causes a Zero Length Interval error
 		_path_follow.progress = 0.00001
@@ -94,9 +102,9 @@ func _process(_delta: float) -> void:
 func walk_along(path: PackedVector2Array) -> void:
 	if path.is_empty():
 		return
-	
 	curve.add_point(Vector2.ZERO)
 	for point in path:
 		curve.add_point(grid.calculate_map_position(point) - position)
 	cell = path[-1]
 	_is_walking = true
+	
