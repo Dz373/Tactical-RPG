@@ -85,7 +85,7 @@ func _process(_delta: float) -> void:
 	if _path_follow.position.x < previousPosition.x:
 		animation_player.play("walk-left")
 	
-	if previousProgress > _path_follow.progress:
+	if previousProgress >= _path_follow.progress:
 		_is_walking = false
 		# Setting this value to 0.0 causes a Zero Length Interval error
 		_path_follow.progress = 0.00001
@@ -102,9 +102,9 @@ func _process(_delta: float) -> void:
 func walk_along(path: PackedVector2Array) -> void:
 	if path.is_empty():
 		return
-	
 	curve.add_point(Vector2.ZERO)
 	for point in path:
 		curve.add_point(grid.calculate_map_position(point) - position)
 	cell = path[-1]
 	_is_walking = true
+	

@@ -50,7 +50,7 @@ func _ready() -> void:
 	unit_path.tile_set.set_tile_size(grid.cell_size)
 	turnCounter.text = "Turn: " + str(turn)
 	actionMenu.visible=false
-	
+
 func reinitialize() -> void:
 	units.clear()
 	player_units.clear()
@@ -69,9 +69,8 @@ func reinitialize() -> void:
 
 func _process(_delta: float) -> void:
 	if finish_turn():
-		turn+=1
-		print("end player turn")
 		enemy_turn()
+		turn+=1
 		reinitialize()
 
 func finish_turn()->bool:
@@ -166,7 +165,7 @@ func in_arrays(cord: Vector2, arr: Array)->bool:
 func is_occupied(cell: Vector2) -> bool:
 	if cell==active_unit.cell:
 		return false
-	if units.has(cell) and enemy_units.has(units[cell]):
+	if units.has(cell):
 		return true
 	return not terrain.can_pass(cell)
 
@@ -309,36 +308,53 @@ func _on_visible_on_screen_enabler_2d_screen_exited() -> void:
 func enemy_turn():
 	for unit in enemy_units:
 		active_unit=unit
-		var target=find_target_unit(unit)
+		print(active_unit.name)
 		var unit_range = get_walkable_cells(unit)
+		var target=find_target_unit(unit, unit_range)
+		unit_range.append(target.cell)
+		
 		unit_path.initialize(unit_range, 2)
 		var move_point = find_move_point(target.cell, unit_range)
 		
 		active_unit.walk_along(unit_path.calculate_point_path(unit.cell,move_point))
 		
+		await active_unit.walk_finished
+		
+		units.erase(active_unit.cell)
+		units[move_point] = active_unit
+		
 		unit_path.stop()
 		active_unit=null
+	
 
-func find_target_unit(current_unit: Unit)->Unit:
-	#find closest player
+func find_target_unit(current_unit:Unit, unit_range:Array)->Unit:
 	var closest_unit = player_units[0]
 	var closest = find_distance(closest_unit, current_unit)
+	var close_arr = []
 	for unit in player_units:
 		var distance=find_distance(unit, current_unit)
 		if  distance < closest:
 			closest_unit=unit
 			closest=distance
+		if unit.cell in unit_range:
+			close_arr.append(unit)
+	
+	for unit in close_arr:
+		if calc_damage(closest_unit) < calc_damage(unit):
+			closest_unit=unit
 	return closest_unit
 
 func find_move_point(cell:Vector2, unit_range:Array)->Vector2:
 	var path = unit_path.calculate_point_path(active_unit.cell,cell)
-	var prev_point = path[0]
+	var prev_point
+	if path:
+		prev_point = path[0]
 	for point in path:
-		if point in unit_range:
+		if point in unit_range and point!=cell:
 			prev_point = point
 			continue
 		return prev_point
-	return cell
+	return active_unit.cell
 
 func find_distance(unit1:Unit, unit2:Unit)->int:
 	var distance = (unit1.cell - unit2.cell).abs()
