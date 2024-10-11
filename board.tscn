@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=4 uid="uid://3qxj2k7wn5y5"]
+[gd_scene load_steps=25 format=4 uid="uid://3qxj2k7wn5y5"]
 
 [ext_resource type="Texture2D" uid="uid://nf0f8dkhrk5w" path="res://Sprites/fantasy_ [version 2.0]/forest_/forest_.png" id="3_j01aq"]
 [ext_resource type="Texture2D" uid="uid://d1esm2c3t2708" path="res://Sprites/fantasy_ [version 2.0]/tundra_/ice_.png" id="5_3xwv7"]
@@ -831,9 +831,6 @@ sources/0 = SubResource("TileSetAtlasSource_qynms")
 [sub_resource type="LabelSettings" id="LabelSettings_h21ic"]
 font_size = 8
 
-[sub_resource type="LabelSettings" id="LabelSettings_y4ama"]
-font_size = 8
-
 [node name="Main" type="Node2D"]
 
 [node name="GameBoard" type="Node2D" parent="."]
@@ -855,25 +852,53 @@ script = ExtResource("7_mlpqg")
 [node name="UnitPath" parent="GameBoard" instance=ExtResource("8_pv6xv")]
 
 [node name="Unit1" parent="GameBoard" instance=ExtResource("12_ddttq")]
-position = Vector2(168, 184)
+position = Vector2(168, 216)
+move_range = 5
 move_speed = 5
 stats = ExtResource("11_sjm0f")
 class_type = ExtResource("12_g5gwo")
 
 [node name="Unit2" parent="GameBoard" instance=ExtResource("12_ddttq")]
-position = Vector2(152, 184)
+position = Vector2(152, 136)
+move_range = 5
 move_speed = 5
-stats = ExtResource("11_sjm0f")
+stats = ExtResource("15_fbfwn")
 class_type = ExtResource("12_g5gwo")
 
 [node name="Enemy1" parent="GameBoard" instance=ExtResource("13_u7hvr")]
-position = Vector2(152, 120)
+position = Vector2(152, 248)
 move_range = 4
+move_speed = 5
 stats = ExtResource("15_fbfwn")
 
 [node name="Enemy2" parent="GameBoard" instance=ExtResource("13_u7hvr")]
-position = Vector2(136, 120)
+position = Vector2(168, 248)
 move_range = 4
+move_speed = 5
+stats = ExtResource("15_fbfwn")
+
+[node name="Enemy3" parent="GameBoard" instance=ExtResource("13_u7hvr")]
+position = Vector2(184, 248)
+move_range = 4
+move_speed = 5
+stats = ExtResource("15_fbfwn")
+
+[node name="Enemy4" parent="GameBoard" instance=ExtResource("13_u7hvr")]
+position = Vector2(200, 248)
+move_range = 4
+move_speed = 5
+stats = ExtResource("15_fbfwn")
+
+[node name="Enemy5" parent="GameBoard" instance=ExtResource("13_u7hvr")]
+position = Vector2(216, 248)
+move_range = 4
+move_speed = 5
+stats = ExtResource("15_fbfwn")
+
+[node name="Enemy6" parent="GameBoard" instance=ExtResource("13_u7hvr")]
+position = Vector2(232, 248)
+move_range = 4
+move_speed = 5
 stats = ExtResource("15_fbfwn")
 
 [node name="Cursor" parent="GameBoard" instance=ExtResource("13_wgu0w")]
@@ -885,14 +910,6 @@ offset_right = 136.0
 offset_bottom = 24.0
 text = "Turn: "
 label_settings = SubResource("LabelSettings_h21ic")
-
-[node name="PlayerTurn" type="Label" parent="GameBoard"]
-offset_left = 8.0
-offset_top = 24.0
-offset_right = 71.0
-offset_bottom = 47.0
-text = "Player Turn"
-label_settings = SubResource("LabelSettings_y4ama")
 
 [node name="ActionMenu" parent="GameBoard" instance=ExtResource("9_xp7j3")]
 offset_left = 261.0

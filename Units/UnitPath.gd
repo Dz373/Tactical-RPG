@@ -47,3 +47,12 @@ func stop() -> void:
 
 func calculate_point_path(start: Vector2, end: Vector2) -> PackedVector2Array:
 	return astar.get_id_path(start,end)
+
+func calculate_path_cost(start:Vector2, end:Vector2)->int:
+	var path = astar.get_id_path(start,end)
+	var cost=0
+	for each in path:
+		if Vector2(each)==start or Vector2(each)==end:
+			continue
+		cost +=astar.get_point_weight_scale(each)
+	return cost

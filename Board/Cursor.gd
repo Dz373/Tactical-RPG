@@ -46,7 +46,10 @@ func _unhandled_input(event: InputEvent):
 	elif event.is_action_pressed("confirm"):
 		emit_signal("accept_pressed", cell)
 		get_viewport().set_input_as_handled()
-
+	
+	elif event.is_action_pressed("cell"):
+		print(cell)
+	
 	var should_move := event.is_pressed() 
 	if event.is_echo():
 		should_move = should_move and _timer.is_stopped()
