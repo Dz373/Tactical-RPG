@@ -10,7 +10,6 @@ const DIRECTIONS = [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]
 @onready var unit_path: UnitPath = $UnitPath
 @onready var terrain: Terrain = $Terrain
 @onready var turnCounter: Label = $Turn
-@onready var playerTurn: Label = $PlayerTurn
 @onready var cursor: Cursor = $Cursor
 @onready var actionMenu: MarginContainer = $ActionMenu
 
@@ -34,15 +33,7 @@ var turn := 1:
 		turn = value
 		turnCounter.text = "Turn: " + str(value)
 		teamTurn = 1
-var teamTurn := 1:
-	set(value):
-		teamTurn = value
-		if value == 1:
-			playerTurn.text = "Player Turn"
-		elif value == 2:
-			playerTurn.text = "Enemy Turn"
-		else:
-			turn+=1
+var teamTurn := 1
 
 func _ready() -> void:
 	reinitialize()
@@ -86,28 +77,29 @@ func get_walkable_cells(unit: Unit)->Array:
 	walk_fill(unit.cell, unit.move_range, arr)
 	return arr
 func walk_fill(cell: Vector2, move_range: int, arr: Array):
-	arr.append(cell)
+	if not cell in arr:
+		arr.append(cell)
 	range_track[cell]=move_range
 	for dir in DIRECTIONS:
-		var new_coord = cell+dir
-		if not grid.is_within_bounds(new_coord) or is_occupied(new_coord):
+		var coord = cell+dir
+		if not grid.is_within_bounds(coord) or is_occupied(coord):
 			continue
-		var new_range = move_range-terrain.terrain_cost(new_coord)
+		var new_range = move_range-terrain.terrain_cost(coord)
 		if new_range < 0:
 			continue
-		if not range_track.has(new_coord):
-			walk_fill(new_coord, new_range, arr)
-		elif new_range > range_track[new_coord]:
-			range_track[new_coord]=new_range
-			walk_fill(new_coord, new_range, arr)
+		if not range_track.has(coord):
+			walk_fill(coord, new_range, arr)
+		elif new_range > range_track[coord]:
+			range_track[coord]=new_range
+			walk_fill(coord, new_range, arr)
 
 var attackArr:=[]
-func get_attackable_cells(_unit: Unit)->Array:
-	return attack_fill(walkable_cells)
+func get_attackable_cells(walk:Array)->Array:
+	attackArr.clear()
+	return attack_fill(walk)
 func attack_fill(walk: Array)->Array:
 	var min_range=active_unit.min_range
 	var max_range=active_unit.max_range
-	
 	for tile in walk:
 		var arr = tiles_in_range(tile, min_range, max_range)
 		var tile_pos = grid.calculate_map_position(tile)
@@ -123,10 +115,8 @@ func wall_in_way(attack_cell: Vector2, tile: Vector2)->bool:
 	var target_pos = grid.calculate_map_position(attack_cell)-tile
 	ray.target_position=target_pos
 	ray.force_raycast_update()
-	
 	return ray.is_colliding()
 
-#return attack range for a single tile
 func tiles_in_range(cell: Vector2, min_range: int, max_range: int)->Array:
 	var arr:=[]
 	if min_range==max_range:
@@ -141,31 +131,26 @@ func attack_in_range(cell: Vector2, attack_range:int, arr: Array)->Array:
 		coordinates = [Vector2(cell.x+x, cell.y+(attack_range-x)), Vector2(cell.x+x, cell.y-(attack_range-x)),
 					   Vector2(cell.x-x, cell.y+(attack_range-x)), Vector2(cell.x-x, cell.y-(attack_range-x))]
 		for cord in coordinates:
-			if in_arrays(cord, arr):
+			if not grid.is_within_bounds(cord):
+				continue
+			if cord==active_unit.cell or cord in attackArr or cord in arr:
 				continue
 			arr.append(cord)
 	
 	coordinates = [Vector2(cell.x+attack_range, cell.y), Vector2(cell.x-attack_range, cell.y)]
 	for cord in coordinates:
-		if in_arrays(cord, arr):
+		if not grid.is_within_bounds(cord):
 			continue
-		if cord==active_unit.cell:
+		if cord==active_unit.cell or cord in attackArr or cord in arr:
 			continue
 		arr.append(cord)
 	return arr
-
-func in_arrays(cord: Vector2, arr: Array)->bool:
-	if not grid.is_within_bounds(cord):
-		return true
-	if cord in walkable_cells or cord in attackArr or cord in arr:
-		return true
-	return false
 
 ## Returns `true` if the cell is occupied by a unit. 
 func is_occupied(cell: Vector2) -> bool:
 	if cell==active_unit.cell:
 		return false
-	if units.has(cell):
+	if units.has(cell) and units[cell].team!=active_unit.team:
 		return true
 	return not terrain.can_pass(cell)
 
@@ -209,7 +194,7 @@ func active_unit_action():
 			if attack_target == Vector2(-1,-1):
 				continue
 			var target_unit = units[attack_target]
-			target_unit.hp -= calc_damage(target_unit)
+			target_unit.hp -= calc_damage(target_unit, active_unit)
 			active_unit.is_attacking=false
 		
 		action_phase=false
@@ -224,10 +209,10 @@ func active_unit_attack(attack_cell: Vector2):
 		return
 	emit_signal("unit_attack", attack_cell)
 
-func calc_damage(target:Unit)->int:
-	if target.def > active_unit.atk:
+func calc_damage(target_unit:Unit, attaking_unit:Unit)->int:
+	if target_unit.def > attaking_unit.atk:
 		return 0
-	return (active_unit.atk-target.def)
+	return (attaking_unit.atk-target_unit.def)
 
 ## Selects the unit in the `cell` if there's one there.
 ## Sets it as the `_active_unit` and draws its walkable cells and interactive move path. 
@@ -243,9 +228,9 @@ func select_unit(cell: Vector2) -> void:
 
 func draw_unit_range():
 	walkable_cells=get_walkable_cells(active_unit)
-	attack_cells=get_attackable_cells(active_unit)
-	unit_overlay.draw_move_range(walkable_cells)
+	attack_cells=get_attackable_cells(walkable_cells)
 	unit_overlay.draw_attack_range(attack_cells)
+	unit_overlay.draw_move_range(walkable_cells)
 	unit_path.initialize(walkable_cells,1)
 
 ## Deselects the active unit, clearing the cells overlay and interactive path drawing.
@@ -306,18 +291,20 @@ func _on_visible_on_screen_enabler_2d_screen_exited() -> void:
 	cursor.menu_on_screen=false
 
 func enemy_turn():
+	teamTurn=2
 	for unit in enemy_units:
 		active_unit=unit
-		print(active_unit.name)
-		var unit_range = get_walkable_cells(unit)
-		var target=find_target_unit(unit, unit_range)
-		unit_range.append(target.cell)
+		var mv_range=get_walkable_cells(unit)
+		var atk_range=get_attackable_cells(mv_range)
 		
-		unit_path.initialize(unit_range, 2)
-		var move_point = find_move_point(target.cell, unit_range)
+		unit_path.initialize(mv_range, 2)
+		var target=find_target_unit(unit, atk_range)
+		
+		unit_path.astar.set_point_solid(target.cell, false)
+		var move_point = find_move_point(target.cell, mv_range,atk_range)
+		unit_path.astar.set_point_solid(target.cell)
 		
 		active_unit.walk_along(unit_path.calculate_point_path(unit.cell,move_point))
-		
 		await active_unit.walk_finished
 		
 		units.erase(active_unit.cell)
@@ -325,37 +312,53 @@ func enemy_turn():
 		
 		unit_path.stop()
 		active_unit=null
-	
 
 func find_target_unit(current_unit:Unit, unit_range:Array)->Unit:
 	var closest_unit = player_units[0]
-	var closest = find_distance(closest_unit, current_unit)
+	var close_dis = unit_path.calculate_path_cost(closest_unit.cell, current_unit.cell)
 	var close_arr = []
 	for unit in player_units:
-		var distance=find_distance(unit, current_unit)
-		if  distance < closest:
+		var distance=unit_path.calculate_path_cost(unit.cell, current_unit.cell)
+		if  distance < close_dis:
 			closest_unit=unit
-			closest=distance
+			close_dis=distance
 		if unit.cell in unit_range:
 			close_arr.append(unit)
-	
 	for unit in close_arr:
-		if calc_damage(closest_unit) < calc_damage(unit):
+		if calc_damage(closest_unit, active_unit) < calc_damage(unit, active_unit):
 			closest_unit=unit
 	return closest_unit
 
-func find_move_point(cell:Vector2, unit_range:Array)->Vector2:
-	var path = unit_path.calculate_point_path(active_unit.cell,cell)
-	var prev_point
-	if path:
-		prev_point = path[0]
-	for point in path:
-		if point in unit_range and point!=cell:
-			prev_point = point
-			continue
-		return prev_point
-	return active_unit.cell
-
-func find_distance(unit1:Unit, unit2:Unit)->int:
-	var distance = (unit1.cell - unit2.cell).abs()
-	return distance.x+distance.y
+func find_move_point(target:Vector2, mv_range:Array,atk_range:Array)->Vector2:
+	var move_point = active_unit.cell
+	var cost = unit_path.calculate_path_cost(active_unit.cell,target)
+	var atk_tiles=[]
+	
+	if target in atk_range:
+		for tile in mv_range:
+			var atk=get_attackable_cells([tile])
+			if target in atk:
+				if not units.has(tile) or tile==active_unit.cell:
+					atk_tiles.append(tile)
+			if units.has(tile):
+				continue
+			var point_cost=unit_path.calculate_path_cost(tile,target)
+			if point_cost<cost:
+				cost=point_cost
+				move_point=tile
+		if atk_tiles.size()==0:
+			var old_target=units[target]
+			player_units.erase(units[target])
+			var new_target=find_target_unit(active_unit,mv_range)
+			player_units.append(old_target)
+			return find_move_point(new_target.cell,mv_range,atk_range)
+	else:
+		for tile in mv_range:
+			if units.has(tile):
+				continue
+			var point_cost=unit_path.calculate_path_cost(tile,target)
+			if point_cost<cost:
+				cost=point_cost
+				move_point=tile
+	
+	return move_point
