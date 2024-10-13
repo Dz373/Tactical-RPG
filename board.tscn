@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=4 uid="uid://3qxj2k7wn5y5"]
+[gd_scene load_steps=23 format=4 uid="uid://3qxj2k7wn5y5"]
 
 [ext_resource type="Texture2D" uid="uid://nf0f8dkhrk5w" path="res://Sprites/fantasy_ [version 2.0]/forest_/forest_.png" id="3_j01aq"]
 [ext_resource type="Texture2D" uid="uid://d1esm2c3t2708" path="res://Sprites/fantasy_ [version 2.0]/tundra_/ice_.png" id="5_3xwv7"]
@@ -10,13 +10,11 @@
 [ext_resource type="PackedScene" uid="uid://yhtd33jo11hi" path="res://Units/unit_overlay.tscn" id="9_75io2"]
 [ext_resource type="PackedScene" uid="uid://ci3xqjw7fs6q6" path="res://Menu/action_menu.tscn" id="9_xp7j3"]
 [ext_resource type="Texture2D" uid="uid://dp04qnya7k2vm" path="res://Sprites/MiniWorldSprites/Miscellaneous/Chests.png" id="10_rst45"]
-[ext_resource type="Resource" uid="uid://benhuddmfpx7k" path="res://Units/Stats/Stat.tres" id="11_sjm0f"]
 [ext_resource type="Script" path="res://Board/Terrain.gd" id="11_w33xh"]
 [ext_resource type="PackedScene" uid="uid://ctdtnl32pqeat" path="res://Units/BaseUnit.tscn" id="12_ddttq"]
 [ext_resource type="Resource" uid="uid://drd011e1sjlsg" path="res://Units/Class_types/Class_type.tres" id="12_g5gwo"]
 [ext_resource type="PackedScene" uid="uid://dq0ulft7ykws0" path="res://Units/Enemy_unit.tscn" id="13_u7hvr"]
 [ext_resource type="PackedScene" uid="uid://cqmdhxbchwu58" path="res://Board/cursor.tscn" id="13_wgu0w"]
-[ext_resource type="Resource" uid="uid://cc3o7bs41vwjp" path="res://Units/Stats/Enemy_Stat.tres" id="15_fbfwn"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_y6kdr"]
 texture = ExtResource("3_j01aq")
@@ -852,54 +850,46 @@ script = ExtResource("7_mlpqg")
 [node name="UnitPath" parent="GameBoard" instance=ExtResource("8_pv6xv")]
 
 [node name="Unit1" parent="GameBoard" instance=ExtResource("12_ddttq")]
-position = Vector2(168, 216)
-move_range = 5
+position = Vector2(152, 136)
+move_range = 8
 move_speed = 5
-stats = ExtResource("11_sjm0f")
 class_type = ExtResource("12_g5gwo")
 
 [node name="Unit2" parent="GameBoard" instance=ExtResource("12_ddttq")]
-position = Vector2(152, 136)
+position = Vector2(168, 200)
 move_range = 5
 move_speed = 5
-stats = ExtResource("15_fbfwn")
 class_type = ExtResource("12_g5gwo")
 
 [node name="Enemy1" parent="GameBoard" instance=ExtResource("13_u7hvr")]
+position = Vector2(168, 184)
+move_range = 4
+move_speed = 5
+
+[node name="Enemy2" parent="GameBoard" instance=ExtResource("13_u7hvr")]
+position = Vector2(152, 200)
+move_range = 4
+move_speed = 5
+
+[node name="Enemy3" parent="GameBoard" instance=ExtResource("13_u7hvr")]
+position = Vector2(184, 200)
+move_range = 4
+move_speed = 5
+
+[node name="Enemy4" parent="GameBoard" instance=ExtResource("13_u7hvr")]
+position = Vector2(168, 232)
+move_range = 4
+move_speed = 5
+
+[node name="Enemy5" parent="GameBoard" instance=ExtResource("13_u7hvr")]
 position = Vector2(152, 248)
 move_range = 4
 move_speed = 5
-stats = ExtResource("15_fbfwn")
 
-[node name="Enemy2" parent="GameBoard" instance=ExtResource("13_u7hvr")]
-position = Vector2(168, 248)
-move_range = 4
-move_speed = 5
-stats = ExtResource("15_fbfwn")
-
-[node name="Enemy3" parent="GameBoard" instance=ExtResource("13_u7hvr")]
+[node name="Enemy6" parent="GameBoard" instance=ExtResource("13_u7hvr")]
 position = Vector2(184, 248)
 move_range = 4
 move_speed = 5
-stats = ExtResource("15_fbfwn")
-
-[node name="Enemy4" parent="GameBoard" instance=ExtResource("13_u7hvr")]
-position = Vector2(200, 248)
-move_range = 4
-move_speed = 5
-stats = ExtResource("15_fbfwn")
-
-[node name="Enemy5" parent="GameBoard" instance=ExtResource("13_u7hvr")]
-position = Vector2(216, 248)
-move_range = 4
-move_speed = 5
-stats = ExtResource("15_fbfwn")
-
-[node name="Enemy6" parent="GameBoard" instance=ExtResource("13_u7hvr")]
-position = Vector2(232, 248)
-move_range = 4
-move_speed = 5
-stats = ExtResource("15_fbfwn")
 
 [node name="Cursor" parent="GameBoard" instance=ExtResource("13_wgu0w")]
 

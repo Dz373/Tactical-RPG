@@ -1,4 +1,3 @@
-@tool
 class_name Unit
 extends Path2D
 
@@ -14,7 +13,7 @@ signal walk_finished
 @export var max_range:= 1
 @export var team := 1
 
-@export var stats: Resource
+#@export var stats: Resource
 @export var class_type: Resource
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
@@ -39,7 +38,7 @@ var end_turn=false:
 		if value:
 			print(str(name)+" end turn")
 
-var hp:
+@export var hp:=5:
 	set(value):
 		if value <= 0:
 			print(str(name) + " defeated")
@@ -50,23 +49,23 @@ var hp:
 				get_parent().enemy_units.erase(self)
 			queue_free()
 		hp = value
-var atk
-var def
+@export var atk:=5
+@export var def:=3
 
 func _ready() -> void:
 	set_process(false)
 	_path_follow.rotates=false
 	cell = grid.calculate_grid_coordinates(position)
 	position = grid.calculate_map_position(cell)
-	set_stat()
+	#set_stat()
 	set_class()
 	if not Engine.is_editor_hint():
 		curve = Curve2D.new()
 
-func set_stat():
+'''func set_stat():
 	hp = stats.hp
 	atk = stats.attack
-	def = stats.defense
+	def = stats.defense'''
 
 func set_class():
 	pass
