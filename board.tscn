@@ -865,31 +865,37 @@ class_type = ExtResource("12_g5gwo")
 position = Vector2(168, 184)
 move_range = 4
 move_speed = 5
+def = 0
 
 [node name="Enemy2" parent="GameBoard" instance=ExtResource("13_u7hvr")]
 position = Vector2(152, 200)
 move_range = 4
 move_speed = 5
+def = 0
 
 [node name="Enemy3" parent="GameBoard" instance=ExtResource("13_u7hvr")]
 position = Vector2(184, 200)
 move_range = 4
 move_speed = 5
+def = 0
 
 [node name="Enemy4" parent="GameBoard" instance=ExtResource("13_u7hvr")]
 position = Vector2(168, 232)
 move_range = 4
 move_speed = 5
+def = 0
 
 [node name="Enemy5" parent="GameBoard" instance=ExtResource("13_u7hvr")]
 position = Vector2(152, 248)
 move_range = 4
 move_speed = 5
+def = 0
 
 [node name="Enemy6" parent="GameBoard" instance=ExtResource("13_u7hvr")]
 position = Vector2(184, 248)
 move_range = 4
 move_speed = 5
+def = 0
 
 [node name="Cursor" parent="GameBoard" instance=ExtResource("13_wgu0w")]
 

@@ -1,6 +1,7 @@
 extends Control
 
 @onready var btnContainer: VBoxContainer = $MenuContainer/BtnContainer
+@onready var atkButton: Button=$MenuContainer/BtnContainer/AttackBtn
 
 var buttons: Array
 
