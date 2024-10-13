@@ -4,3 +4,8 @@ water:
 forest:
 	2 movement
 	avoid buff
+	
+snow:
+	2 movement
+ice:
+	3 movement

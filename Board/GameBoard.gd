@@ -172,6 +172,10 @@ signal unit_attack(unit)
 func active_unit_action():
 	clear_overlay()
 	attack_cells=get_attackable_cells([active_unit.cell])
+	for unit in enemy_units:
+		if unit.cell in attack_cells:
+			actionMenu.atkButton.visible=true
+			break
 	unit_overlay.draw_attack_range(attack_cells)
 	action_phase=true
 	while action_phase:
@@ -196,7 +200,7 @@ func active_unit_action():
 		
 		action_phase=false
 		active_unit.end_turn = true
-		
+	actionMenu.atkButton.visible=false
 	clear_active_unit()
 
 func active_unit_attack(attack_cell: Vector2):
