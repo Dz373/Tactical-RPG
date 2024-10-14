@@ -842,6 +842,7 @@ script = ExtResource("11_w33xh")
 grid = ExtResource("7_gurcu")
 
 [node name="Obstacle" type="TileMapLayer" parent="GameBoard/Terrain"]
+tile_map_data = PackedByteArray("AAANAA0AAAABAAAAAAANAA8AAAABAAAAAAA=")
 tile_set = SubResource("TileSet_glbsn")
 script = ExtResource("7_mlpqg")
 
@@ -851,15 +852,17 @@ script = ExtResource("7_mlpqg")
 
 [node name="Unit1" parent="GameBoard" instance=ExtResource("12_ddttq")]
 position = Vector2(152, 136)
-move_range = 8
-move_speed = 5
-class_type = ExtResource("12_g5gwo")
-
-[node name="Unit2" parent="GameBoard" instance=ExtResource("12_ddttq")]
-position = Vector2(168, 200)
 move_range = 5
 move_speed = 5
 class_type = ExtResource("12_g5gwo")
+def = 0
+
+[node name="Unit2" parent="GameBoard" instance=ExtResource("12_ddttq")]
+position = Vector2(216, 232)
+move_range = 5
+move_speed = 5
+class_type = ExtResource("12_g5gwo")
+def = 0
 
 [node name="Enemy1" parent="GameBoard" instance=ExtResource("13_u7hvr")]
 position = Vector2(168, 184)

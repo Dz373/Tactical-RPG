@@ -59,7 +59,13 @@ func reinitialize() -> void:
 		unit.end_turn=false
 
 func _process(_delta: float) -> void:
-	if finish_turn():
+	if player_units.size()==0:
+		print("enemy win")
+		set_process(false)
+	elif enemy_units.size()==0:
+		print("player win")
+		set_process(false)
+	elif finish_turn():
 		enemy_turn()
 		turn+=1
 		reinitialize()
@@ -92,7 +98,6 @@ func walk_fill(cell: Vector2, move_range: int, arr: Array):
 		elif new_range > move_cost[coord]:
 			move_cost[coord]=new_range
 			walk_fill(coord, new_range, arr)
-
 
 func get_attackable_cells(walk: Array)->Array:
 	var min_range=active_unit.min_range
@@ -297,33 +302,37 @@ func enemy_turn():
 		active_unit=unit
 		var mv_range=get_walkable_cells(unit)
 		var atk_range=get_attackable_cells(mv_range)
-		unit_path.initialize(mv_range, 2)
-		get_targets_in_range(mv_range)
-		var target=find_target_unit(unit, atk_range)
-		
-		unit_path.astar.set_point_solid(target.cell, false)
+		var target=find_target_unit(unit, atk_range,mv_range)
 		var move_point = find_move_point(target, mv_range)
-		unit_path.astar.set_point_solid(target.cell)
-		units.erase(active_unit.cell)
-		units[move_point] = active_unit
-		active_unit.walk_along(unit_path.calculate_point_path(unit.cell,move_point))
-		await active_unit.walk_finished
 		
+		unit.walk_along(unit_path.calculate_point_path(unit.cell,move_point))
+		await unit.walk_finished
+		
+		if unit.is_attacking:
+			target.hp-=calc_damage(target,unit)
+			unit.is_attacking=false
+		
+		if player_units.size()==0:
+			return
 		unit_path.stop()
 		active_unit=null
 
-func find_target_unit(current_unit:Unit, atk_range:Array)->Unit:
+func find_target_unit(current_unit:Unit, atk_range:Array, mv_range:Array)->Unit:
+	unit_path.initialize(mv_range, 2)
+	var targets_in_range = get_targets_in_range(mv_range)
 	var closest_unit = get_closest_unit(current_unit)
 	if closest_unit.cell in atk_range:
 		for unit in targets_in_range:
 			if not closest_unit in targets_in_range:
 				closest_unit=unit
-				continue
 			if calc_damage(closest_unit, active_unit) < calc_damage(unit, active_unit):
 				closest_unit=unit
+			if not active_unit.is_attacking:
+				active_unit.is_attacking=true
 	return closest_unit
 
 func find_move_point(target:Unit, mv_range:Array)->Vector2:
+	unit_path.astar.set_point_solid(target.cell, false)
 	var move_point = active_unit.cell
 	var cost = unit_path.calculate_path_cost(active_unit.cell,target.cell)
 	for tile in mv_range:
@@ -333,17 +342,20 @@ func find_move_point(target:Unit, mv_range:Array)->Vector2:
 		if point_cost<cost:
 			cost=point_cost
 			move_point=tile
+	units.erase(active_unit.cell)
+	units[move_point] = active_unit
+	unit_path.astar.set_point_solid(target.cell)
 	return move_point
 
-var targets_in_range:=[]
 func get_targets_in_range(mv_range:Array):
-	targets_in_range.clear()
+	var targets_in_range=[]
 	for unit in player_units:
 		var atk_arr=get_attack_tiles(unit, mv_range)
 		for tile in atk_arr:
 			if tile in mv_range:
 				targets_in_range.append(unit)
 				break
+	return targets_in_range
 
 func get_attack_tiles(target:Unit, mv_range:Array)->Array:
 	var arr=[]
