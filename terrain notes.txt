@@ -1,3 +1,10 @@
+terrain calculation:
+	take value of object if there is one on current tile
+	otherwise take value of terrain
+
+impassable terrain:
+	cost=100
+
 water:
 	2 movement required
 

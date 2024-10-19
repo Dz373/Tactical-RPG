@@ -20,6 +20,7 @@ signal walk_finished
 @onready var collision: CharacterBody2D=$CharacterBody2D2
 @onready var raycast: RayCast2D=$RayCast2D
 @onready var _path_follow: PathFollow2D = $PathFollow2D
+@onready var hp_bar: TextureProgressBar=$PathFollow2D/TextureProgressBar
 
 var cell := Vector2.ZERO:
 	set(value):
@@ -38,8 +39,13 @@ var end_turn=false:
 		if value:
 			print(str(name)+" end turn")
 
-@export var hp:=5:
+@export var max_hp:=5
+var hp:=max_hp:
 	set(value):
+		if value==max_hp:
+			hp_bar.visible=false
+		else:
+			hp_bar.visible=true
 		if value <= 0:
 			print(str(name) + " defeated")
 			get_parent().units.erase(cell)
@@ -49,6 +55,7 @@ var end_turn=false:
 				get_parent().enemy_units.erase(self)
 			queue_free()
 		hp = value
+		hp_bar.value=value
 @export var atk:=5
 @export var def:=3
 
@@ -57,18 +64,10 @@ func _ready() -> void:
 	_path_follow.rotates=false
 	cell = grid.calculate_grid_coordinates(position)
 	position = grid.calculate_map_position(cell)
-	#set_stat()
-	set_class()
 	if not Engine.is_editor_hint():
 		curve = Curve2D.new()
-
-'''func set_stat():
-	hp = stats.hp
-	atk = stats.attack
-	def = stats.defense'''
-
-func set_class():
-	pass
+	hp_bar.max_value=max_hp
+	hp_bar.value=hp
 
 var previousProgress=0
 var previousPosition=Vector2(0,0)

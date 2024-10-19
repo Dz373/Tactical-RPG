@@ -31,8 +31,8 @@ func initialize(walkable_cells: Array, team:int) -> void:
 				if distance <= active.move_range and not walkable_cells.has(Vector2(x,y)):
 					astar.set_point_solid(Vector2(x,y))
 					continue
-			if terrain.terrain_cost(Vector2(x,y))!=1:
-				astar.set_point_weight_scale(Vector2(x,y),terrain.terrain_cost(Vector2(x,y)))
+			if terrain.cost(Vector2(x,y))!=1:
+				astar.set_point_weight_scale(Vector2(x,y),terrain.cost(Vector2(x,y)))
 
 ## Finds and draws the path between `cell_start` and `cell_end`
 func draw(cell_start: Vector2, cell_end: Vector2) -> void:
