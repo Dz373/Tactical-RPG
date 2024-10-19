@@ -17,11 +17,7 @@ const DIRECTIONS = [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]
 var units := {}
 var player_units :=[]
 var enemy_units :=[]
-var active_unit:
-	set(value):
-		active_unit=value
-		if value:
-			active_unit_start=value.cell
+var active_unit: Unit
 var active_unit_start: Vector2
 var walkable_cells := []
 var attack_cells := []
@@ -54,9 +50,9 @@ func reinitialize() -> void:
 			units[unit.cell] = unit
 		if unit.team==1:
 			player_units.append(unit)
+			unit.end_turn=false
 		elif unit.team==2:
 			enemy_units.append(unit)
-		unit.end_turn=false
 
 func _process(_delta: float) -> void:
 	if player_units.size()==0:
@@ -90,7 +86,7 @@ func walk_fill(cell: Vector2, move_range: int, arr: Array):
 		var coord = cell+dir
 		if not grid.is_within_bounds(coord) or is_occupied(coord):
 			continue
-		var new_range = move_range-terrain.terrain_cost(coord)
+		var new_range = move_range-terrain.cost(coord)
 		if new_range < 0:
 			continue
 		if not move_cost.has(coord):
@@ -111,7 +107,6 @@ func get_attackable_cells(walk: Array)->Array:
 				continue
 			attackArr.append(i)
 	return attackArr
-
 func wall_in_way(attack_cell: Vector2, current_cell: Vector2)->bool:
 	var ray = active_unit.raycast
 	var target_pos = grid.calculate_map_position(attack_cell)-current_cell
@@ -119,7 +114,6 @@ func wall_in_way(attack_cell: Vector2, current_cell: Vector2)->bool:
 	ray.target_position=target_pos
 	ray.force_raycast_update()
 	return ray.is_colliding()
-
 func tiles_in_range(cell: Vector2, min_range: int, max_range: int, attackArr:Array)->Array:
 	var atk_in_range:=[]
 	if min_range==max_range:
@@ -127,7 +121,6 @@ func tiles_in_range(cell: Vector2, min_range: int, max_range: int, attackArr:Arr
 	for i in range(min_range, max_range+1):
 		atk_in_range = attack_in_range(cell, i, atk_in_range, attackArr)
 	return atk_in_range
-
 func attack_in_range(cell: Vector2, attack_range:int, atk_in_range:Array,attackArr:Array)->Array:
 	var coordinates:=[]
 	for x in range(attack_range):
@@ -207,7 +200,6 @@ func active_unit_action():
 		active_unit.end_turn = true
 	actionMenu.atkButton.visible=false
 	clear_active_unit()
-
 func active_unit_attack(attack_cell: Vector2):
 	if not attack_cell in attack_cells or not units.has(attack_cell):
 		return
@@ -228,6 +220,7 @@ func select_unit(cell: Vector2) -> void:
 	if units[cell].end_turn:
 		return
 	active_unit = units[cell]
+	active_unit_start=cell
 	active_unit.is_selected = true
 	active_unit.end_turn = false
 	draw_unit_range()
@@ -281,17 +274,14 @@ func _on_cursor_accept_pressed(cell: Vector2) -> void:
 		active_unit_attack(cell)
 	else:
 		print("press error")
-
 func _on_cursor_moved(new_cell: Vector2) -> void:
 	if active_unit and active_unit.is_selected:
 		unit_path.draw(active_unit.cell, new_cell)
-
 func _on_visible_on_screen_enabler_2d_screen_entered() -> void:
 	menu_on_screen=true
 	cursor.menu_on_screen=true
 	cursor.position = active_unit.position
 	actionMenu.get_first_button().grab_focus()
-
 func _on_visible_on_screen_enabler_2d_screen_exited() -> void:
 	menu_on_screen=false
 	cursor.menu_on_screen=false
@@ -330,7 +320,6 @@ func find_target_unit(current_unit:Unit, atk_range:Array, mv_range:Array)->Unit:
 			if not active_unit.is_attacking:
 				active_unit.is_attacking=true
 	return closest_unit
-
 func find_move_point(target:Unit, mv_range:Array)->Vector2:
 	unit_path.astar.set_point_solid(target.cell, false)
 	var move_point = active_unit.cell
@@ -346,7 +335,6 @@ func find_move_point(target:Unit, mv_range:Array)->Vector2:
 	units[move_point] = active_unit
 	unit_path.astar.set_point_solid(target.cell)
 	return move_point
-
 func get_targets_in_range(mv_range:Array):
 	var targets_in_range=[]
 	for unit in player_units:
@@ -356,7 +344,6 @@ func get_targets_in_range(mv_range:Array):
 				targets_in_range.append(unit)
 				break
 	return targets_in_range
-
 func get_attack_tiles(target:Unit, mv_range:Array)->Array:
 	var arr=[]
 	for tile in mv_range:
@@ -368,7 +355,6 @@ func get_attack_tiles(target:Unit, mv_range:Array)->Array:
 				arr.append(tile)
 				break
 	return arr
-
 func get_closest_unit(current:Unit)->Unit:
 	var closest_unit = player_units[0]
 	var close_dis = unit_path.calculate_path_cost(closest_unit.cell, current.cell)

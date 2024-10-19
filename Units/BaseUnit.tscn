@@ -1,8 +1,10 @@
-[gd_scene load_steps=12 format=3 uid="uid://ctdtnl32pqeat"]
+[gd_scene load_steps=14 format=3 uid="uid://ctdtnl32pqeat"]
 
 [ext_resource type="Script" path="res://Units/Unit.gd" id="1_y3goi"]
 [ext_resource type="Resource" uid="uid://drtdco6fmbidy" path="res://Board/Grid.tres" id="2_1j018"]
 [ext_resource type="Texture2D" uid="uid://bu4ed5o001h3l" path="res://Sprites/MiniWorldSprites/Characters/Soldiers/Melee/SwordsmanTemplate.png" id="3_os75b"]
+[ext_resource type="Texture2D" uid="uid://qmfl3eb2q2a4" path="res://Sprites/My Sprites/bar_background.png" id="4_44cqy"]
+[ext_resource type="Texture2D" uid="uid://bsj57bos3v3tl" path="res://Sprites/My Sprites/bar_progress.png" id="5_pcwl1"]
 
 [sub_resource type="Animation" id="Animation_phpei"]
 length = 0.001
@@ -129,6 +131,15 @@ rotates = false
 texture = ExtResource("3_os75b")
 hframes = 5
 vframes = 12
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="PathFollow2D"]
+visible = false
+offset_left = -8.0
+offset_top = -1.0
+offset_right = 8.0
+offset_bottom = 15.0
+texture_under = ExtResource("4_44cqy")
+texture_progress = ExtResource("5_pcwl1")
 
 [node name="CharacterBody2D2" type="CharacterBody2D" parent="."]
 collision_layer = 4
