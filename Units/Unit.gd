@@ -62,8 +62,12 @@ var hp:=max_hp:
 func _ready() -> void:
 	set_process(false)
 	_path_follow.rotates=false
+	
+	print(position)
 	cell = grid.calculate_grid_coordinates(position)
+	print(cell)
 	position = grid.calculate_map_position(cell)
+	
 	if not Engine.is_editor_hint():
 		curve = Curve2D.new()
 	hp_bar.max_value=max_hp

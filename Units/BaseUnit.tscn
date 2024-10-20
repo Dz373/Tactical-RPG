@@ -138,6 +138,7 @@ offset_left = -8.0
 offset_top = -1.0
 offset_right = 8.0
 offset_bottom = 15.0
+max_value = 5.0
 texture_under = ExtResource("4_44cqy")
 texture_progress = ExtResource("5_pcwl1")
 

@@ -9,8 +9,8 @@ const DIRECTIONS = [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]
 @onready var unit_overlay: UnitOverlay = $UnitOverlay
 @onready var unit_path: UnitPath = $UnitPath
 @onready var terrain: Terrain = $Terrain
-@onready var turnCounter: Label = $Turn
 @onready var cursor: Cursor = $Cursor
+@onready var turnCounter: Label = $Turn
 @onready var actionMenu: MarginContainer = $ActionMenu
 
 ## Mapping of coordinates of a cell to a reference to the unit it contains.
@@ -21,7 +21,6 @@ var active_unit: Unit
 var active_unit_start: Vector2
 var walkable_cells := []
 var attack_cells := []
-var menu_on_screen := false
 var action_phase=false
 
 var turn := 1:
@@ -37,6 +36,7 @@ func _ready() -> void:
 	unit_path.tile_set.set_tile_size(grid.cell_size)
 	turnCounter.text = "Turn: " + str(turn)
 	actionMenu.visible=false
+	cursor.cell=player_units[0].cell
 
 func reinitialize() -> void:
 	units.clear()
@@ -278,12 +278,9 @@ func _on_cursor_moved(new_cell: Vector2) -> void:
 	if active_unit and active_unit.is_selected:
 		unit_path.draw(active_unit.cell, new_cell)
 func _on_visible_on_screen_enabler_2d_screen_entered() -> void:
-	menu_on_screen=true
 	cursor.menu_on_screen=true
-	cursor.position = active_unit.position
 	actionMenu.get_first_button().grab_focus()
 func _on_visible_on_screen_enabler_2d_screen_exited() -> void:
-	menu_on_screen=false
 	cursor.menu_on_screen=false
 
 func enemy_turn():

@@ -10,11 +10,11 @@ extends Resource
 @export var cell_size := Vector2(16,16)
 
 ## Half of ``cell_size``
-var _half_cell_size = cell_size / 2
+var half_size = cell_size / 2
 
 ## Returns the position of a cell's center in pixels.
 func calculate_map_position(grid_position: Vector2) -> Vector2:
-	return grid_position * cell_size + _half_cell_size
+	return grid_position * cell_size + half_size
 
 ## Returns the coordinates of the cell on the grid given a position on the map.
 func calculate_grid_coordinates(map_position: Vector2) -> Vector2:
