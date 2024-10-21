@@ -9,3 +9,13 @@ func _ready() -> void:
 
 func get_mouse_pos():
 	return grid.calculate_grid_coordinates(get_local_mouse_position()+grid.half_size)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("zoom_in"):
+		if zoom==Vector2(8,8):
+			return
+		zoom+=Vector2(1,1)
+	elif event.is_action_pressed("zoom_out"):
+		if zoom==Vector2(1,1):
+			return
+		zoom-=Vector2(1,1)

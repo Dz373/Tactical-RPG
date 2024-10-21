@@ -7,8 +7,6 @@ signal accept_pressed(cell)
 signal moved(new_cell)
 ## Grid resource, giving the node access to the grid size, and more.
 @export var grid: Resource
-## Time before the cursor can move again in seconds.
-@export var ui_cooldown := 0.1
 
 @onready var camera : Camera = $Camera
 
@@ -29,15 +27,23 @@ var cell := Vector2.ZERO:
 		position = grid.calculate_map_position(cell)	
 		emit_signal("moved", cell)
 
-@onready var _timer: Timer = $Timer
-
 func _ready() -> void:
-	_timer.wait_time = ui_cooldown
-
+	set_process(false)
+	
+func _process(_delta: float) -> void:
+	
+	cell += camera.get_mouse_pos()
+	
 func _unhandled_input(event: InputEvent):
 	if menu_on_screen:
 		return
 	if event is InputEventMouseMotion:
+		if event.position.x > 576 or event.position.x < 64:
+			set_process(true)
+		elif event.position.y > 576 or event.position.y < 64:
+			set_process(true)
+		else:
+			set_process(false)
 		cell += camera.get_mouse_pos()
 	# Trying to select something in a cell.
 	elif event.is_action_pressed("confirm"):
@@ -48,7 +54,7 @@ func _unhandled_input(event: InputEvent):
 	
 	var should_move := event.is_pressed() 
 	if event.is_echo():
-		should_move = should_move and _timer.is_stopped()
+		should_move = should_move
 	if not should_move:
 		return
 	
