@@ -13,8 +13,8 @@ region = Rect2(416, 16, 48, 48)
 texture = ExtResource("3_8lwov")
 
 [node name="ActionMenu" type="MarginContainer"]
-offset_right = 59.0
-offset_bottom = 32.0
+offset_right = 120.0
+offset_bottom = 38.0
 theme_override_constants/margin_right = 0
 script = ExtResource("1_fq3m4")
 
@@ -29,45 +29,56 @@ patch_margin_bottom = 16
 [node name="MenuContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 focus_mode = 1
-theme_override_constants/margin_left = 5
+theme_override_constants/margin_left = 6
 theme_override_constants/margin_top = 7
-theme_override_constants/margin_right = 5
+theme_override_constants/margin_right = 6
 theme_override_constants/margin_bottom = 7
 
 [node name="BtnContainer" type="VBoxContainer" parent="MenuContainer"]
 layout_mode = 2
+theme_override_constants/separation = 5
 alignment = 1
 
 [node name="AttackBtn" parent="MenuContainer/BtnContainer" instance=ExtResource("4_t33he")]
 visible = false
+custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
 theme_override_styles/focus = SubResource("StyleBoxTexture_2u1ts")
 text = "Attack"
 
 [node name="MagicBtn" parent="MenuContainer/BtnContainer" instance=ExtResource("4_t33he")]
 visible = false
+custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
 theme_override_styles/focus = SubResource("StyleBoxTexture_2u1ts")
 text = "Magic"
 
 [node name="SkillBtn" parent="MenuContainer/BtnContainer" instance=ExtResource("4_t33he")]
 visible = false
+custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
 theme_override_styles/focus = SubResource("StyleBoxTexture_2u1ts")
 text = "Skill"
 
 [node name="ItemBtn" parent="MenuContainer/BtnContainer" instance=ExtResource("4_t33he")]
 visible = false
+custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
 theme_override_styles/focus = SubResource("StyleBoxTexture_2u1ts")
 text = "Item"
 
 [node name="WaitBtn" parent="MenuContainer/BtnContainer" instance=ExtResource("4_t33he")]
+custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
 theme_override_styles/focus = SubResource("StyleBoxTexture_2u1ts")
 text = "Wait"

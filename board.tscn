@@ -838,7 +838,6 @@ custom_data_layer_0/type = 1
 sources/0 = SubResource("TileSetAtlasSource_qynms")
 
 [sub_resource type="LabelSettings" id="LabelSettings_h21ic"]
-font_size = 8
 
 [node name="Main" type="Node2D"]
 
@@ -876,6 +875,7 @@ move_speed = 5
 def = 0
 
 [node name="Cursor" parent="GameBoard" instance=ExtResource("13_wgu0w")]
+visible = false
 
 [node name="Camera" type="Camera2D" parent="GameBoard/Cursor"]
 zoom = Vector2(2, 2)
@@ -892,23 +892,27 @@ editor_draw_limits = true
 editor_draw_drag_margin = true
 script = ExtResource("15_fw7mw")
 
-[node name="Turn" type="Label" parent="GameBoard"]
+[node name="CanvasLayer" type="CanvasLayer" parent="GameBoard"]
+
+[node name="Turn" type="Label" parent="GameBoard/CanvasLayer"]
 offset_left = 8.0
 offset_top = 8.0
-offset_right = 136.0
+offset_right = 128.0
 offset_bottom = 24.0
 text = "Turn: "
 label_settings = SubResource("LabelSettings_h21ic")
 
-[node name="ActionMenu" parent="GameBoard" instance=ExtResource("9_xp7j3")]
-offset_left = 261.0
-offset_right = 320.0
+[node name="ActionMenu" parent="GameBoard/CanvasLayer" instance=ExtResource("9_xp7j3")]
+offset_left = 536.0
+offset_top = 152.0
+offset_right = 634.0
+offset_bottom = 201.0
 
-[node name="VisibleOnScreenEnabler2D2" type="VisibleOnScreenEnabler2D" parent="GameBoard/ActionMenu"]
-position = Vector2(29.5, 16)
-scale = Vector2(2.85, 1.5)
+[node name="VisibleOnScreenEnabler2D2" type="VisibleOnScreenEnabler2D" parent="GameBoard/CanvasLayer/ActionMenu"]
+position = Vector2(48.5, 24.5)
+scale = Vector2(4.75, 2.35)
 
 [connection signal="accept_pressed" from="GameBoard/Cursor" to="GameBoard" method="_on_cursor_accept_pressed"]
 [connection signal="moved" from="GameBoard/Cursor" to="GameBoard" method="_on_cursor_moved"]
-[connection signal="screen_entered" from="GameBoard/ActionMenu/VisibleOnScreenEnabler2D2" to="GameBoard" method="_on_visible_on_screen_enabler_2d_screen_entered"]
-[connection signal="screen_exited" from="GameBoard/ActionMenu/VisibleOnScreenEnabler2D2" to="GameBoard" method="_on_visible_on_screen_enabler_2d_screen_exited"]
+[connection signal="screen_entered" from="GameBoard/CanvasLayer/ActionMenu/VisibleOnScreenEnabler2D2" to="GameBoard" method="_on_visible_on_screen_enabler_2d_screen_entered"]
+[connection signal="screen_exited" from="GameBoard/CanvasLayer/ActionMenu/VisibleOnScreenEnabler2D2" to="GameBoard" method="_on_visible_on_screen_enabler_2d_screen_exited"]

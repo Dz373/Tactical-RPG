@@ -10,8 +10,8 @@ const DIRECTIONS = [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]
 @onready var unit_path: UnitPath = $UnitPath
 @onready var terrain: Terrain = $Terrain
 @onready var cursor: Cursor = $Cursor
-@onready var turnCounter: Label = $Turn
-@onready var actionMenu: MarginContainer = $ActionMenu
+@onready var turnCounter: Label = $CanvasLayer/Turn
+@onready var actionMenu: MarginContainer = $CanvasLayer/ActionMenu
 
 ## Mapping of coordinates of a cell to a reference to the unit it contains.
 var units := {}

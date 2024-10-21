@@ -31,18 +31,14 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent):
 	if menu_on_screen:
 		return
-	
 	if event is InputEventMouseMotion:
 		cell += camera.get_mouse_pos()
-	
 	# Trying to select something in a cell.
 	elif event.is_action_pressed("confirm"):
 		emit_signal("accept_pressed", cell)
 		get_viewport().set_input_as_handled()
-	
 	elif event.is_action_pressed("cell"):
 		print(position)
-	
 	var should_move := event.is_pressed() 
 	if event.is_echo():
 		should_move = should_move and _timer.is_stopped()
