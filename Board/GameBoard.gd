@@ -158,59 +158,15 @@ func move_active_unit(new_cell: Vector2) -> void:
 	if is_occupied(new_cell) or not new_cell in walkable_cells:
 		return
 	if units.has(new_cell) and player_units.has(units[new_cell]):
-		return 
+		return
 	units.erase(active_unit.cell)
 	units[new_cell] = active_unit
 	deselect_active_unit()
+	
+	cursor.menu_on_screen=true
 	active_unit.walk_along(unit_path.current_path)
 	await active_unit.walk_finished
 	active_unit_action()
-
-signal unit_attack(unit)
-func active_unit_action():
-	clear_overlay()
-	attack_cells=get_attackable_cells([active_unit.cell])
-	for unit in enemy_units:
-		if unit.cell in attack_cells:
-			actionMenu.atkButton.visible=true
-			break
-	unit_overlay.draw_attack_range(attack_cells)
-	action_phase=true
-	while action_phase:
-		actionMenu.visible=true
-		var btn = await SignalBus.btn_pressed
-		actionMenu.visible=false
-		if btn == "cancel":
-			action_phase=false
-			break
-		if btn == "WaitBtn":
-			active_unit.end_turn = true
-			action_phase=false
-			break
-		elif btn == "AttackBtn":
-			active_unit.is_attacking=true
-			var attack_target = await unit_attack
-			if attack_target == Vector2(-1,-1):
-				continue
-			var target_unit = units[attack_target]
-			target_unit.hp -= calc_damage(target_unit, active_unit)
-			active_unit.is_attacking=false
-		
-		action_phase=false
-		active_unit.end_turn = true
-	actionMenu.atkButton.visible=false
-	clear_active_unit()
-func active_unit_attack(attack_cell: Vector2):
-	if not attack_cell in attack_cells or not units.has(attack_cell):
-		return
-	if units[attack_cell].team==1:
-		return
-	emit_signal("unit_attack", attack_cell)
-
-func calc_damage(target_unit:Unit, attaking_unit:Unit)->int:
-	if target_unit.def > attaking_unit.atk:
-		return 0
-	return (attaking_unit.atk-target_unit.def)
 
 ## Selects the unit in the `cell` if there's one there.
 ## Sets it as the `_active_unit` and draws its walkable cells and interactive move path. 
@@ -274,14 +230,64 @@ func _on_cursor_accept_pressed(cell: Vector2) -> void:
 		active_unit_attack(cell)
 	else:
 		print("press error")
+
 func _on_cursor_moved(new_cell: Vector2) -> void:
 	if active_unit and active_unit.is_selected:
 		unit_path.draw(active_unit.cell, new_cell)
-func _on_visible_on_screen_enabler_2d_screen_entered() -> void:
+
+func _on_action_menu_screen_entered() -> void:
 	cursor.menu_on_screen=true
 	actionMenu.get_first_button().grab_focus()
-func _on_visible_on_screen_enabler_2d_screen_exited() -> void:
+func _on_action_menu_screen_exited() -> void:
 	cursor.menu_on_screen=false
+
+signal unit_attack(unit)
+func active_unit_action():
+	clear_overlay()
+	attack_cells=get_attackable_cells([active_unit.cell])
+	for unit in enemy_units:
+		if unit.cell in attack_cells:
+			actionMenu.atkButton.visible=true
+			break
+	unit_overlay.draw_attack_range(attack_cells)
+	action_phase=true
+	while action_phase:
+		actionMenu.visible=true
+		var btn = await SignalBus.btn_pressed
+		actionMenu.visible=false
+		if btn == "cancel":
+			action_phase=false
+			break
+		if btn == "WaitBtn":
+			active_unit.end_turn = true
+			action_phase=false
+			break
+		elif btn == "AttackBtn":
+			active_unit.is_attacking=true
+			cursor.visible=true
+			var attack_target = await unit_attack
+			if attack_target == Vector2(-1,-1):#cancel attack
+				continue
+			var target_unit = units[attack_target]
+			target_unit.hp -= calc_damage(target_unit, active_unit)
+			active_unit.is_attacking=false
+		
+		action_phase=false
+		active_unit.end_turn = true
+	cursor.visible=true
+	actionMenu.atkButton.visible=false
+	clear_active_unit()
+func active_unit_attack(attack_cell: Vector2):
+	if not attack_cell in attack_cells or not units.has(attack_cell):
+		return
+	if units[attack_cell].team==1:
+		return
+	emit_signal("unit_attack", attack_cell)
+
+func calc_damage(target_unit:Unit, attaking_unit:Unit)->int:
+	if target_unit.def > attaking_unit.atk:
+		return 0
+	return (attaking_unit.atk-target_unit.def)
 
 func enemy_turn():
 	teamTurn=2

@@ -12,7 +12,13 @@ signal moved(new_cell)
 
 @onready var camera : Camera = $Camera
 
-var menu_on_screen := false
+var menu_on_screen := false:
+	set(value):
+		if value:
+			visible=false
+		else:
+			visible=true
+		menu_on_screen=value
 
 var cell := Vector2.ZERO:
 	set(value):
@@ -39,6 +45,7 @@ func _unhandled_input(event: InputEvent):
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("cell"):
 		print(position)
+	
 	var should_move := event.is_pressed() 
 	if event.is_echo():
 		should_move = should_move and _timer.is_stopped()

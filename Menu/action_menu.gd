@@ -12,7 +12,6 @@ func _ready() -> void:
 			continue
 		if btn:
 			buttons.append(btn)
-	get_first_button().grab_focus()
 
 func get_first_button()->Button:
 	for btn in buttons:
