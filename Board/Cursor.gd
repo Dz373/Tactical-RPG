@@ -31,17 +31,16 @@ func _ready() -> void:
 	set_process(false)
 	
 func _process(_delta: float) -> void:
-	if cell.x==0 or cell.x==grid.size.x-1 or cell.y==0 or cell.y==grid.size.y-1:
-		return
+	
 	cell += camera.get_mouse_pos()
 	
 func _unhandled_input(event: InputEvent):
 	if menu_on_screen:
 		return
 	if event is InputEventMouseMotion:
-		if event.position.x > 608 or event.position.x < 32:
+		if event.position.x > 576 or event.position.x < 64:
 			set_process(true)
-		elif event.position.y > 608 or event.position.y < 32:
+		elif event.position.y > 576 or event.position.y < 64:
 			set_process(true)
 		else:
 			set_process(false)
