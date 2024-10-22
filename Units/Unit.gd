@@ -8,13 +8,10 @@ signal walk_finished
 ## Distance to which the unit can walk in cells.
 @export var move_range := 6
 ## The unit's move speed when it's moving along a path.
-@export var move_speed := 1
 @export var min_range:= 1
 @export var max_range:= 1
 @export var team := 1
-
-#@export var stats: Resource
-@export var class_type: Resource
+var move_speed = 5
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var collision: CharacterBody2D=$CharacterBody2D2
@@ -39,8 +36,9 @@ var end_turn=false:
 		if value:
 			print(str(name)+" end turn")
 
-@export var max_hp:=5
-var hp:=max_hp:
+@export var class_type:String
+var max_hp
+var hp:int:
 	set(value):
 		if value==max_hp:
 			hp_bar.visible=false
@@ -56,8 +54,10 @@ var hp:=max_hp:
 			queue_free()
 		hp = value
 		hp_bar.value=value
-@export var atk:=5
-@export var def:=3
+var atk:int
+var def:int
+
+var flying:=false
 
 func _ready() -> void:
 	set_process(false)
@@ -66,10 +66,19 @@ func _ready() -> void:
 	cell = grid.calculate_grid_coordinates(position)
 	position = grid.calculate_map_position(cell)
 	
+	set_stats()
+	
 	if not Engine.is_editor_hint():
 		curve = Curve2D.new()
+	
+
+func set_stats()->void:
+	var stats=ClassStats.stats[class_type]
+	max_hp=stats["hp"]
+	hp=max_hp
 	hp_bar.max_value=max_hp
-	hp_bar.value=hp
+	atk=stats["atk"]
+	def=stats["def"]
 
 var previousProgress=0
 var previousPosition=Vector2(0,0)
