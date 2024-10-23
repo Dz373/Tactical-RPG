@@ -312,9 +312,9 @@ func enemy_turn():
 
 func find_target_unit(current_unit:Unit, atk_range:Array, mv_range:Array)->Unit:
 	unit_path.initialize(mv_range, 2)
-	var targets_in_range = get_targets_in_range(mv_range)
 	var closest_unit = get_closest_unit(current_unit)
 	if closest_unit.cell in atk_range:
+		var targets_in_range = get_targets_in_range(mv_range)
 		for unit in targets_in_range:
 			if not closest_unit in targets_in_range:
 				closest_unit=unit
