@@ -1,9 +1,0 @@
-[gd_resource type="Resource" load_steps=2 format=3 uid="uid://cc3o7bs41vwjp"]
-
-[ext_resource type="Script" path="res://Units/Stats/Stat.gd" id="1_8tw3x"]
-
-[resource]
-script = ExtResource("1_8tw3x")
-hp = 5
-attack = 3
-defense = 0

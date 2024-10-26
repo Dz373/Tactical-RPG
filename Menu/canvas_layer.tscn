@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://j2kkof36w6re"]
+
+[ext_resource type="PackedScene" uid="uid://ci3xqjw7fs6q6" path="res://Menu/action_menu.tscn" id="1_vmcwi"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_h21ic"]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+
+[node name="Turn" type="Label" parent="."]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 128.0
+offset_bottom = 24.0
+text = "Turn: "
+label_settings = SubResource("LabelSettings_h21ic")
+
+[node name="ActionMenu" parent="." instance=ExtResource("1_vmcwi")]
+offset_left = 520.0
+offset_top = 128.0
+offset_right = 640.0
+offset_bottom = 177.0
+
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="ActionMenu"]
+position = Vector2(56, 24)
+
+[connection signal="screen_entered" from="ActionMenu/VisibleOnScreenEnabler2D" to="ActionMenu" method="_on_action_menu_screen_entered"]
+[connection signal="screen_exited" from="ActionMenu/VisibleOnScreenEnabler2D" to="ActionMenu" method="_on_action_menu_screen_exited"]

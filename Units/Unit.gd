@@ -5,11 +5,7 @@ extends Path2D
 signal walk_finished
 ## Shared resource of type Grid, used to calculate map coordinates.
 @export var grid: Resource
-## Distance to which the unit can walk in cells.
-@export var move_range := 6
-## The unit's move speed when it's moving along a path.
-@export var min_range:= 1
-@export var max_range:= 1
+
 @export var team := 1
 var move_speed = 5
 
@@ -22,19 +18,13 @@ var move_speed = 5
 var cell := Vector2.ZERO:
 	set(value):
 		cell = grid.grid_clamp(value)
-var is_selected := false:
-	set(value):
-		is_selected = value
+var is_selected = false
 var _is_walking := false:
 	set(value):
 		_is_walking = value
 		set_process(_is_walking)
 var is_attacking=false
-var end_turn=false:
-	set(value):
-		end_turn=value
-		if value:
-			print(str(name)+" end turn")
+var end_turn=false
 
 @export var class_type:String
 var max_hp
@@ -57,16 +47,27 @@ var hp:int:
 var atk:int
 var def:int
 
+var move_range:int
+var min_range:int
+var max_range:int
+
+var lvl:int
+var weapons:=[]
+var accessories:=[]
+var consumables:=[]
 var flying:=false
 
 func _ready() -> void:
 	set_process(false)
 	_path_follow.rotates=false
-	
 	cell = grid.calculate_grid_coordinates(position)
 	position = grid.calculate_map_position(cell)
 	
 	set_stats()
+	
+	if class_type == "Archer":
+		$PathFollow2D/Sprite2D.texture=load("res://Sprites/MiniWorldSprites/Characters/Soldiers/Ranged/BowmanTemplate.png")
+		$PathFollow2D/Sprite2D.vframes=8
 	
 	if not Engine.is_editor_hint():
 		curve = Curve2D.new()
@@ -79,6 +80,9 @@ func set_stats()->void:
 	hp_bar.max_value=max_hp
 	atk=stats["atk"]
 	def=stats["def"]
+	move_range=stats["mv_range"]
+	min_range=stats["atk_range_min"]
+	max_range=stats["atk_range_max"]
 
 var previousProgress=0
 var previousPosition=Vector2(0,0)
