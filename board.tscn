@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=4 uid="uid://3qxj2k7wn5y5"]
+[gd_scene load_steps=22 format=4 uid="uid://3qxj2k7wn5y5"]
 
 [ext_resource type="Texture2D" uid="uid://nf0f8dkhrk5w" path="res://Sprites/fantasy_ [version 2.0]/forest_/forest_.png" id="3_j01aq"]
 [ext_resource type="Texture2D" uid="uid://d1esm2c3t2708" path="res://Sprites/fantasy_ [version 2.0]/tundra_/ice_.png" id="5_3xwv7"]
@@ -6,14 +6,14 @@
 [ext_resource type="Resource" uid="uid://drtdco6fmbidy" path="res://Board/Grid.tres" id="7_gurcu"]
 [ext_resource type="Script" path="res://Board/GameBoard.gd" id="7_jg22f"]
 [ext_resource type="Script" path="res://Board/obstacle.gd" id="7_mlpqg"]
-[ext_resource type="PackedScene" uid="uid://nn0f5svx4huo" path="res://Units/unit_path.tscn" id="8_pv6xv"]
-[ext_resource type="PackedScene" uid="uid://yhtd33jo11hi" path="res://Units/unit_overlay.tscn" id="9_75io2"]
-[ext_resource type="PackedScene" uid="uid://ci3xqjw7fs6q6" path="res://Menu/action_menu.tscn" id="9_xp7j3"]
+[ext_resource type="PackedScene" path="res://Units/unit_path.tscn" id="8_pv6xv"]
+[ext_resource type="PackedScene" path="res://Units/unit_overlay.tscn" id="9_75io2"]
 [ext_resource type="Texture2D" uid="uid://dp04qnya7k2vm" path="res://Sprites/MiniWorldSprites/Miscellaneous/Chests.png" id="10_rst45"]
 [ext_resource type="Script" path="res://Board/Terrain.gd" id="11_w33xh"]
 [ext_resource type="PackedScene" uid="uid://ctdtnl32pqeat" path="res://Units/BaseUnit.tscn" id="12_ddttq"]
 [ext_resource type="PackedScene" uid="uid://dq0ulft7ykws0" path="res://Units/Enemy_unit.tscn" id="13_u7hvr"]
 [ext_resource type="PackedScene" uid="uid://cqmdhxbchwu58" path="res://Board/cursor.tscn" id="13_wgu0w"]
+[ext_resource type="PackedScene" uid="uid://j2kkof36w6re" path="res://Menu/canvas_layer.tscn" id="15_fivd0"]
 [ext_resource type="Script" path="res://Board/Camera.gd" id="15_fw7mw"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_y6kdr"]
@@ -836,8 +836,6 @@ custom_data_layer_0/name = "block"
 custom_data_layer_0/type = 1
 sources/0 = SubResource("TileSetAtlasSource_qynms")
 
-[sub_resource type="LabelSettings" id="LabelSettings_h21ic"]
-
 [node name="Main" type="Node2D"]
 
 [node name="GameBoard" type="Node2D" parent="."]
@@ -861,13 +859,14 @@ script = ExtResource("7_mlpqg")
 
 [node name="Unit1" parent="GameBoard" instance=ExtResource("12_ddttq")]
 position = Vector2(152, 136)
-move_range = 8
-max_range = 3
-class_type = "Unit"
+class_type = "Melee"
+
+[node name="Unit2" parent="GameBoard" instance=ExtResource("12_ddttq")]
+position = Vector2(136, 136)
+class_type = "Archer"
 
 [node name="Enemy1" parent="GameBoard" instance=ExtResource("13_u7hvr")]
 position = Vector2(168, 184)
-move_range = 4
 class_type = "Enemy"
 
 [node name="Cursor" parent="GameBoard" instance=ExtResource("13_wgu0w")]
@@ -887,26 +886,7 @@ editor_draw_limits = true
 editor_draw_drag_margin = true
 script = ExtResource("15_fw7mw")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="GameBoard"]
-
-[node name="Turn" type="Label" parent="GameBoard/CanvasLayer"]
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 128.0
-offset_bottom = 24.0
-text = "Turn: "
-label_settings = SubResource("LabelSettings_h21ic")
-
-[node name="ActionMenu" parent="GameBoard/CanvasLayer" instance=ExtResource("9_xp7j3")]
-offset_left = 520.0
-offset_top = 128.0
-offset_right = 640.0
-offset_bottom = 177.0
-
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="GameBoard/CanvasLayer/ActionMenu"]
-position = Vector2(56, 24)
+[node name="CanvasLayer" parent="GameBoard" instance=ExtResource("15_fivd0")]
 
 [connection signal="accept_pressed" from="GameBoard/Cursor" to="GameBoard" method="_on_cursor_accept_pressed"]
 [connection signal="moved" from="GameBoard/Cursor" to="GameBoard" method="_on_cursor_moved"]
-[connection signal="screen_entered" from="GameBoard/CanvasLayer/ActionMenu/VisibleOnScreenEnabler2D" to="GameBoard" method="_on_action_menu_screen_entered"]
-[connection signal="screen_exited" from="GameBoard/CanvasLayer/ActionMenu/VisibleOnScreenEnabler2D" to="GameBoard" method="_on_action_menu_screen_exited"]

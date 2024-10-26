@@ -235,12 +235,6 @@ func _on_cursor_moved(new_cell: Vector2) -> void:
 	if active_unit and active_unit.is_selected:
 		unit_path.draw(active_unit.cell, new_cell)
 
-func _on_action_menu_screen_entered() -> void:
-	cursor.menu_on_screen=true
-	actionMenu.get_first_button().grab_focus()
-func _on_action_menu_screen_exited() -> void:
-	cursor.menu_on_screen=false
-
 signal unit_attack(unit)
 func active_unit_action():
 	clear_overlay()

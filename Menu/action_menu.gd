@@ -2,7 +2,7 @@ extends Control
 
 @onready var btnContainer: VBoxContainer = $MenuContainer/BtnContainer
 @onready var atkButton: Button=$MenuContainer/BtnContainer/AttackBtn
-
+@onready var cursor: Cursor=$"../../Cursor"
 var buttons: Array
 
 func _ready() -> void:
@@ -27,3 +27,9 @@ func get_focus_button()->Button:
 		if btn.has_focus():
 			return btn
 	return
+
+func _on_action_menu_screen_entered() -> void:
+	cursor.menu_on_screen=true
+	get_first_button().grab_focus()
+func _on_action_menu_screen_exited() -> void:
+	cursor.menu_on_screen=false
