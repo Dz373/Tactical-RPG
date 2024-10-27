@@ -28,7 +28,7 @@ func initialize(walkable_cells: Array, team:int) -> void:
 				var active=get_parent().active_unit
 				var dis_vec = (active.cell-Vector2(x,y)).abs()
 				var distance = dis_vec.x+dis_vec.y
-				if distance <= active.move_range and not walkable_cells.has(Vector2(x,y)):
+				if distance <= active.class_stat.mv_range and not walkable_cells.has(Vector2(x,y)):
 					astar.set_point_solid(Vector2(x,y))
 					continue
 			if terrain.cost(Vector2(x,y))!=1:

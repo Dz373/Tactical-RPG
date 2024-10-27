@@ -15,13 +15,13 @@ text = "Turn: "
 label_settings = SubResource("LabelSettings_h21ic")
 
 [node name="ActionMenu" parent="." instance=ExtResource("1_vmcwi")]
+visible = false
 offset_left = 520.0
 offset_top = 128.0
 offset_right = 640.0
 offset_bottom = 177.0
 
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="ActionMenu"]
+[node name="VisibleOnScreenEnabler2D2" type="VisibleOnScreenEnabler2D" parent="ActionMenu"]
 position = Vector2(56, 24)
 
-[connection signal="screen_entered" from="ActionMenu/VisibleOnScreenEnabler2D" to="ActionMenu" method="_on_action_menu_screen_entered"]
-[connection signal="screen_exited" from="ActionMenu/VisibleOnScreenEnabler2D" to="ActionMenu" method="_on_action_menu_screen_exited"]
+[connection signal="screen_entered" from="ActionMenu/VisibleOnScreenEnabler2D2" to="ActionMenu" method="_on_action_menu_screen_entered"]

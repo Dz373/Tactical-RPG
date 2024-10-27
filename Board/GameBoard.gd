@@ -3,7 +3,6 @@ extends Node2D
 
 const DIRECTIONS = [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]
 
-## Resource of type Grid.
 @export var grid: Resource
 
 @onready var unit_overlay: UnitOverlay = $UnitOverlay
@@ -13,7 +12,6 @@ const DIRECTIONS = [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]
 @onready var turnCounter: Label = $CanvasLayer/Turn
 @onready var actionMenu: MarginContainer = $CanvasLayer/ActionMenu
 
-## Mapping of coordinates of a cell to a reference to the unit it contains.
 var units := {}
 var player_units :=[]
 var enemy_units :=[]
@@ -76,7 +74,7 @@ var move_cost:={}
 func get_walkable_cells(unit: Unit)->Array:
 	move_cost.clear()
 	var arr:=[]
-	walk_fill(unit.cell, unit.move_range, arr)
+	walk_fill(unit.cell, unit.class_stat.mv_range, arr)
 	return arr
 func walk_fill(cell: Vector2, move_range: int, arr: Array):
 	if not cell in arr:
@@ -96,8 +94,8 @@ func walk_fill(cell: Vector2, move_range: int, arr: Array):
 			walk_fill(coord, new_range, arr)
 
 func get_attackable_cells(walk: Array)->Array:
-	var min_range=active_unit.min_range
-	var max_range=active_unit.max_range
+	var min_range=active_unit.class_stat.atk_range_min
+	var max_range=active_unit.class_stat.atk_range_max
 	var attackArr=[]
 	for tile in walk:
 		var arr = tiles_in_range(tile, min_range, max_range, attackArr)
@@ -247,8 +245,10 @@ func active_unit_action():
 	action_phase=true
 	while action_phase:
 		actionMenu.visible=true
+		cursor.menu_on_screen=true
 		var btn = await SignalBus.btn_pressed
 		actionMenu.visible=false
+		cursor.menu_on_screen=false
 		if btn == "cancel":
 			action_phase=false
 			break
@@ -279,9 +279,9 @@ func active_unit_attack(attack_cell: Vector2):
 	emit_signal("unit_attack", attack_cell)
 
 func calc_damage(target_unit:Unit, attaking_unit:Unit)->int:
-	if target_unit.def > attaking_unit.atk:
+	if target_unit.class_stat.def > attaking_unit.class_stat.atk:
 		return 0
-	return (attaking_unit.atk-target_unit.def)
+	return (attaking_unit.class_stat.atk-target_unit.class_stat.def)
 
 func enemy_turn():
 	teamTurn=2
