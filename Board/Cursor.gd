@@ -1,11 +1,9 @@
 class_name Cursor
 extends Node2D
 
-## Emitted when clicking on the currently hovered cell or when pressing "ui_accept".
 signal accept_pressed(cell)
-## Emitted when the cursor moved to a new cell.
 signal moved(new_cell)
-## Grid resource, giving the node access to the grid size, and more.
+
 @export var grid: Resource
 
 @onready var camera : Camera = $Camera
@@ -45,7 +43,7 @@ func _unhandled_input(event: InputEvent):
 		else:
 			set_process(false)
 		cell += camera.get_mouse_pos()
-	# Trying to select something in a cell.
+	
 	elif event.is_action_pressed("confirm"):
 		emit_signal("accept_pressed", cell)
 		get_viewport().set_input_as_handled()
@@ -58,7 +56,6 @@ func _unhandled_input(event: InputEvent):
 	if not should_move:
 		return
 	
-	#arrow keys
 	if event.is_action("right"):
 		cell += Vector2.RIGHT
 	if event.is_action("left"):

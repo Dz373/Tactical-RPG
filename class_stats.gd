@@ -1,14 +1,16 @@
 extends Node
 
-#stats will be percentages
-var stats={
-	"Melee":{"hp":5, "atk":5, "def":3,
-			"mv_range":7, "atk_range_min":1,"atk_range_max":1},
+var classes:={}
+const path = "res://Units/Stats/"
+
+func _init() -> void:
+	var dir = DirAccess.open(path)
+	if dir:
+		var file_list = dir.get_files()
+		for file in file_list:
+			var file_path = path + "/" + file
+			var stat = load(file_path)
+			classes[stat.name]=stat
+	else:
+		print("An error occurred when trying to access the path.")
 	
-	"Archer":{"hp":5, "atk":5, "def":0,
-			"mv_range":5, "atk_range_min":2,"atk_range_max":2},
-	
-	"Enemy":{"hp":10, "atk":4, "def":0,
-			"mv_range":5, "atk_range_min":1,"atk_range_max":1},
-	
-}

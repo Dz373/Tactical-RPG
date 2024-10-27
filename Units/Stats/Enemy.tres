@@ -1,12 +1,25 @@
-[gd_resource type="Resource" script_class="statType" load_steps=2 format=3 uid="uid://cc3o7bs41vwjp"]
+[gd_resource type="Resource" script_class="classStat" load_steps=3 format=3 uid="uid://cc3o7bs41vwjp"]
 
 [ext_resource type="Script" path="res://Units/Stat.gd" id="1_6y5u2"]
+[ext_resource type="Texture2D" uid="uid://cdyvjmu7ib1e4" path="res://Sprites/MiniWorldSprites/Characters/Soldiers/Melee/AssasinTemplate.png" id="2_qpvva"]
 
 [resource]
 script = ExtResource("1_6y5u2")
+name = "Enemy"
 hp = 5
-attack = 3
-defense = 2
-mv_range = 5
-atk_range_min = 2
-atk_range_max = 2
+atk = 5
+mag = 3
+def = 2
+res = 0
+skl = 2
+spd = 5
+lck = 3
+mv_range = 3
+atk_range_min = 1
+atk_range_max = 1
+wep_num = 1
+acc_num = 1
+itm_num = 1
+ign_wall = false
+ign_tile = false
+texture = ExtResource("2_qpvva")

@@ -1,12 +1,25 @@
-[gd_resource type="Resource" script_class="statType" load_steps=2 format=3 uid="uid://bv2erff66rwer"]
+[gd_resource type="Resource" script_class="classStat" load_steps=3 format=3 uid="uid://bv2erff66rwer"]
 
 [ext_resource type="Script" path="res://Units/Stat.gd" id="1_3fqa7"]
+[ext_resource type="Texture2D" uid="uid://do4ohh8r5sniu" path="res://Sprites/MiniWorldSprites/Characters/Soldiers/Ranged/BowmanTemplate.png" id="2_jv8pr"]
 
 [resource]
 script = ExtResource("1_3fqa7")
+name = ""
 hp = 5
-attack = 5
-defense = 2
-mv_range = 7
+atk = 5
+mag = 3
+def = 2
+res = 0
+skl = 2
+spd = 5
+lck = 3
+mv_range = 5
 atk_range_min = 1
 atk_range_max = 1
+wep_num = 1
+acc_num = 1
+itm_num = 1
+ign_wall = false
+ign_tile = false
+texture = ExtResource("2_jv8pr")
