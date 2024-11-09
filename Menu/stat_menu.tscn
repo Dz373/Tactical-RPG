@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://cnbms5jtd6lkh"]
+[gd_scene load_steps=2 format=3 uid="uid://0rsavt4cigpc"]
 
 [ext_resource type="Script" path="res://Menu/statMenu.gd" id="1_22gq4"]
 
@@ -6,6 +6,7 @@
 offset_top = 496.0
 offset_right = 184.0
 offset_bottom = 640.0
+theme_override_constants/margin_left = 8
 theme_override_constants/margin_bottom = 8
 script = ExtResource("1_22gq4")
 
