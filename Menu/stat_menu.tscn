@@ -17,16 +17,17 @@ layout_mode = 2
 layout_mode = 2
 text = "Class: "
 
-[node name="Stats" type="HBoxContainer" parent="Container"]
+[node name="Stats" type="Control" parent="Container"]
 layout_mode = 2
-theme_override_constants/separation = 24
 
 [node name="Stat1" type="VBoxContainer" parent="Container/Stats"]
 layout_mode = 2
+offset_right = 60.0
+offset_bottom = 116.0
 
 [node name="Hp" type="Label" parent="Container/Stats/Stat1"]
 layout_mode = 2
-text = "HP: "
+text = "HP:  "
 
 [node name="Atk" type="Label" parent="Container/Stats/Stat1"]
 layout_mode = 2
@@ -50,6 +51,9 @@ text = "SPD: "
 
 [node name="Stat2" type="VBoxContainer" parent="Container/Stats"]
 layout_mode = 2
+offset_left = 96.0
+offset_right = 146.0
+offset_bottom = 116.0
 
 [node name="Skl" type="Label" parent="Container/Stats/Stat2"]
 layout_mode = 2
