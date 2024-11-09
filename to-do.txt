@@ -1,0 +1,6 @@
+--character stat screen--
+
+battle screen
+items
+accessories
+weapons

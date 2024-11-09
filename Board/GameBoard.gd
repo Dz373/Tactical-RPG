@@ -11,6 +11,7 @@ const DIRECTIONS = [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]
 @onready var cursor: Cursor = $Cursor
 @onready var turnCounter: Label = $CanvasLayer/Turn
 @onready var actionMenu: MarginContainer = $CanvasLayer/ActionMenu
+@onready var statMenu: MarginContainer=$CanvasLayer/UnitStats
 
 var units := {}
 var player_units :=[]
@@ -74,7 +75,7 @@ var move_cost:={}
 func get_walkable_cells(unit: Unit)->Array:
 	move_cost.clear()
 	var arr:=[]
-	walk_fill(unit.cell, unit.class_stat.mv_range, arr)
+	walk_fill(unit.cell, unit.stats.mv_range, arr)
 	return arr
 func walk_fill(cell: Vector2, move_range: int, arr: Array):
 	if not cell in arr:
@@ -85,6 +86,8 @@ func walk_fill(cell: Vector2, move_range: int, arr: Array):
 		if not grid.is_within_bounds(coord) or is_occupied(coord):
 			continue
 		var new_range = move_range-terrain.cost(coord)
+		if active_unit.stats.ign_tile:
+			new_range=move_range-1
 		if new_range < 0:
 			continue
 		if not move_cost.has(coord):
@@ -94,15 +97,15 @@ func walk_fill(cell: Vector2, move_range: int, arr: Array):
 			walk_fill(coord, new_range, arr)
 
 func get_attackable_cells(walk: Array)->Array:
-	var min_range=active_unit.class_stat.atk_range_min
-	var max_range=active_unit.class_stat.atk_range_max
+	var min_range=active_unit.stats.atk_range_min
+	var max_range=active_unit.stats.atk_range_max
 	var attackArr=[]
 	for tile in walk:
 		var arr = tiles_in_range(tile, min_range, max_range, attackArr)
-		var tile_pos = grid.calculate_map_position(tile)
+		#var tile_pos = grid.calculate_map_position(tile)
 		for i in arr:
-			if wall_in_way(i, tile_pos):
-				continue
+			#if wall_in_way(i, tile_pos):
+				#continue
 			attackArr.append(i)
 	return attackArr
 func wall_in_way(attack_cell: Vector2, current_cell: Vector2)->bool:
@@ -146,6 +149,8 @@ func is_occupied(cell: Vector2) -> bool:
 		return false
 	if units.has(cell) and units[cell].team!=active_unit.team:
 		return true
+	if active_unit.stats.ign_tile:
+		return false
 	return not terrain.can_pass(cell)
 
 ## Updates the _units dictionary with the target position for the unit and asks the _active_unit to walk to it.
@@ -176,7 +181,6 @@ func select_unit(cell: Vector2) -> void:
 	active_unit = units[cell]
 	active_unit_start=cell
 	active_unit.is_selected = true
-	active_unit.end_turn = false
 	draw_unit_range()
 
 func draw_unit_range():
@@ -184,7 +188,7 @@ func draw_unit_range():
 	attack_cells=get_attackable_cells(walkable_cells)
 	unit_overlay.draw_attack_range(attack_cells)
 	unit_overlay.draw_move_range(walkable_cells)
-	unit_path.initialize(walkable_cells,1)
+	unit_path.initialize(walkable_cells,1, active_unit)
 
 ## Deselects the active unit, clearing the cells overlay and interactive path drawing.
 func deselect_active_unit() -> void:
@@ -200,7 +204,22 @@ func clear_overlay():
 	unit_path.stop()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if active_unit and event.is_action_pressed("cancel"):
+	if event.is_action_pressed("QUIT"):
+		get_tree().quit()
+	
+	elif event.is_action_pressed("stats"):
+		if cursor.cell in units:
+			if statMenu.unit and statMenu.unit==units[cursor.cell]:
+				statMenu.visible=false
+				statMenu.unit=null
+			else:
+				statMenu.unit=units[cursor.cell]
+				statMenu.showMenu()
+		else: 
+			statMenu.visible=false
+			statMenu.unit=null
+	
+	elif active_unit and event.is_action_pressed("cancel"):
 		#cancel after selecting unit
 		if active_unit.is_selected:
 			deselect_active_unit()
@@ -279,9 +298,9 @@ func active_unit_attack(attack_cell: Vector2):
 	emit_signal("unit_attack", attack_cell)
 
 func calc_damage(target_unit:Unit, attaking_unit:Unit)->int:
-	if target_unit.class_stat.def > attaking_unit.class_stat.atk:
+	if target_unit.stats.def > attaking_unit.stats.atk:
 		return 0
-	return (attaking_unit.class_stat.atk-target_unit.class_stat.def)
+	return (attaking_unit.stats.atk-target_unit.stats.def)
 
 func enemy_turn():
 	teamTurn=2
@@ -305,7 +324,7 @@ func enemy_turn():
 		active_unit=null
 
 func find_target_unit(current_unit:Unit, atk_range:Array, mv_range:Array)->Unit:
-	unit_path.initialize(mv_range, 2)
+	unit_path.initialize(mv_range, 2, active_unit)
 	var closest_unit = get_closest_unit(current_unit)
 	if closest_unit.cell in atk_range:
 		var targets_in_range = get_targets_in_range(mv_range)
@@ -361,3 +380,4 @@ func get_closest_unit(current:Unit)->Unit:
 			closest_unit=unit
 			close_dis=distance
 	return closest_unit
+	
