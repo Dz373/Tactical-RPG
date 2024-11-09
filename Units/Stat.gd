@@ -9,7 +9,7 @@ extends Resource
 @export var def := 2
 @export var res := 0
 @export var skl := 2
-@export var spd :=5
+@export var spd := 5
 @export var lck := 3
 
 @export var mv_range:=7
@@ -20,9 +20,11 @@ extends Resource
 @export var acc_num:=1
 @export var itm_num:=1
 
+##ignore walls in line of sight
 @export var ign_wall:=false
+##ignore movement cost of tiles
 @export var ign_tile:=false
 
-var classification
+@export var classification:Classification
 
 @export var texture:Texture2D

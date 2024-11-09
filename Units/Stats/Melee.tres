@@ -1,7 +1,18 @@
-[gd_resource type="Resource" script_class="statType" load_steps=3 format=3 uid="uid://benhuddmfpx7k"]
+[gd_resource type="Resource" script_class="classStat" load_steps=5 format=3 uid="uid://benhuddmfpx7k"]
 
+[ext_resource type="Script" path="res://Units/classification.gd" id="1_4v6a7"]
 [ext_resource type="Script" path="res://Units/Stat.gd" id="1_x0quk"]
 [ext_resource type="Texture2D" uid="uid://bu4ed5o001h3l" path="res://Sprites/MiniWorldSprites/Characters/Soldiers/Melee/SwordsmanTemplate.png" id="2_fls0q"]
+
+[sub_resource type="Resource" id="Resource_onvge"]
+script = ExtResource("1_4v6a7")
+land = false
+fyling = false
+aquatic = false
+humanoid = false
+beast = false
+dragon = false
+demon = false
 
 [resource]
 script = ExtResource("1_x0quk")
@@ -13,8 +24,14 @@ def = 2
 res = 0
 skl = 2
 spd = 5
-luck = 3
+lck = 3
 mv_range = 7
 atk_range_min = 1
-atk_range_max = 1
+atk_range_max = 2
+wep_num = 1
+acc_num = 1
+itm_num = 1
+ign_wall = false
+ign_tile = false
+classification = SubResource("Resource_onvge")
 texture = ExtResource("2_fls0q")

@@ -9,6 +9,7 @@ signal walk_finished
 var move_speed = 5
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var sprite:Sprite2D=$PathFollow2D/Sprite2D
 @onready var collision: CharacterBody2D=$CharacterBody2D2
 @onready var raycast: RayCast2D=$RayCast2D
 @onready var _path_follow: PathFollow2D = $PathFollow2D
@@ -26,11 +27,11 @@ var is_attacking=false
 var end_turn=false
 
 @export var class_type:String
-var class_stat
+var stats:classStat
 var lvl=1
 var hp:int:
 	set(value):
-		if value==class_stat.hp:
+		if value==stats.hp:
 			hp_bar.visible=false
 		else:
 			hp_bar.visible=true
@@ -49,7 +50,6 @@ var weapons:=[]
 var accessories:=[]
 var consumables:=[]
 var skills:=[]
-var flying:=false
 
 func _ready() -> void:
 	set_process(false)
@@ -57,11 +57,18 @@ func _ready() -> void:
 	cell = grid.calculate_grid_coordinates(position)
 	position = grid.calculate_map_position(cell)
 	
-	class_stat=ClassStats.classes[class_type]
-	hp = class_stat.hp
+	stats=ClassStats.classes[class_type]
+	hp = stats.hp
+	hp_bar.max_value=stats.hp
+	set_sprite()
 	
 	if not Engine.is_editor_hint():
 		curve = Curve2D.new()
+
+func set_sprite()->void:
+	sprite.texture=stats.texture
+	sprite.vframes=stats.texture.get_height()/grid.cell_size.x
+	sprite.hframes=stats.texture.get_width()/grid.cell_size.y
 
 var previousProgress=0
 var previousPosition=Vector2(0,0)
@@ -97,3 +104,27 @@ func walk_along(path: PackedVector2Array) -> void:
 	cell = path[-1]
 	_is_walking = true
 	
+func get_stat(stat: String):
+	match stat:
+		"Hp":
+			return " "+str(hp)
+		"Atk":
+			return str(stats.atk)
+		"Mag":
+			return str(stats.mag)
+		"Def":
+			return str(stats.def)
+		"Res":
+			return str(stats.res)
+		"Skl":
+			return str(stats.skl)
+		"Spd":
+			return str(stats.spd)
+		"Lck":
+			return str(stats.lck)
+		"Mov":
+			return str(stats.mv_range)
+		"Rng":
+			if stats.atk_range_min==stats.atk_range_max:
+				return str(stats.atk_range_min)
+			return str(stats.atk_range_min)+"-"+str(stats.atk_range_max)

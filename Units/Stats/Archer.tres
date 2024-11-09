@@ -1,25 +1,37 @@
-[gd_resource type="Resource" script_class="classStat" load_steps=3 format=3 uid="uid://bv2erff66rwer"]
+[gd_resource type="Resource" script_class="classStat" load_steps=5 format=3 uid="uid://bv2erff66rwer"]
 
 [ext_resource type="Script" path="res://Units/Stat.gd" id="1_3fqa7"]
+[ext_resource type="Script" path="res://Units/classification.gd" id="1_y3bbd"]
 [ext_resource type="Texture2D" uid="uid://do4ohh8r5sniu" path="res://Sprites/MiniWorldSprites/Characters/Soldiers/Ranged/BowmanTemplate.png" id="2_jv8pr"]
+
+[sub_resource type="Resource" id="Resource_wfgi4"]
+script = ExtResource("1_y3bbd")
+land = false
+fyling = false
+aquatic = false
+humanoid = false
+beast = false
+dragon = false
+demon = false
 
 [resource]
 script = ExtResource("1_3fqa7")
-name = ""
+name = "Archer"
 hp = 5
 atk = 5
 mag = 3
-def = 2
+def = 0
 res = 0
 skl = 2
 spd = 5
 lck = 3
-mv_range = 5
-atk_range_min = 1
-atk_range_max = 1
+mv_range = 3
+atk_range_min = 2
+atk_range_max = 2
 wep_num = 1
 acc_num = 1
 itm_num = 1
-ign_wall = false
+ign_wall = true
 ign_tile = false
+classification = SubResource("Resource_wfgi4")
 texture = ExtResource("2_jv8pr")
